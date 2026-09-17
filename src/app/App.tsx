@@ -6,10 +6,12 @@ import { StatusBar } from '@/components/shared/StatusBar'
 import { Toast, type ToastType } from '@/components/ui/toast'
 import { Workbench, useFormatter } from '@/features/formatter'
 import { useSearch } from '@/features/search'
+import { Inspector } from '@/features/inspector'
 
 export function App() {
   const formatter = useFormatter()
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const [activeView, setActiveView] = useState<'editor' | 'tree'>('editor')
   const [toast, setToast] = useState<{
     message: string
     type: ToastType
@@ -97,15 +99,25 @@ export function App() {
         onFutureToolSelect={handleFutureToolSelect}
         isSearchActive={search.isOpen}
         onToggleSearch={handleToggleSearch}
+        activeView={activeView}
+        onViewChange={setActiveView}
       />
 
-      {/* Dual-Pane Workbench Editor Area */}
+      {/* Main Dual-Pane Editor Area OR Inspector Area */}
       <main className="flex flex-1 flex-col overflow-hidden">
-        <Workbench
-          formatter={formatter}
-          search={search}
-          inputTextareaRef={inputTextareaRef}
-        />
+        {activeView === 'editor' ? (
+          <Workbench
+            formatter={formatter}
+            search={search}
+            inputTextareaRef={inputTextareaRef}
+          />
+        ) : (
+          <Inspector
+            input={formatter.input}
+            onToast={showToast}
+            onSwitchToEditor={() => setActiveView('editor')}
+          />
+        )}
       </main>
 
       {/* Live Status Bar */}

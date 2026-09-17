@@ -16,21 +16,27 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 0 — Foundation**
+> **Phase 3 — JSON Inspection** complete.
 >
-> The engineering foundation is established. The application shell, design system, theming, and tooling are in place.
->
-> Phase 1 (Core Formatter MVP) is next.
+> Core Formatter, Editor Search & Replace, and JSON Inspection (Tree View, JSONPath & Statistics) are active.
 
-### Planned Features
+### Features
 
-- Format / Minify / Validate / Repair
-- Search / Search & Replace / JSONPath
-- Tree View / Statistics
-- Structural Diff
-- Sort Keys / Flatten / Unflatten / Escape / Unescape
-- Convert to Table / CSV / TypeScript / Dart / JSON Schema
-- Schema Validation / Assertions / Mock JSON
+- **Format / Minify / Validate**: Indentation (2 spaces, 4 spaces, tabs), fast parsing, syntax error indicators.
+- **Editor Search & Replace**: Case-sensitive, whole-word toggles, match navigation, replace current / all.
+- **Tree View Inspector**:
+  - Interactive recursive hierarchy for objects and arrays.
+  - Expand/collapse individual nodes, Expand All, Collapse All.
+  - Distinct syntax styling for strings, numbers, booleans, and null.
+  - Quick actions per node: Copy Key, Copy Value, Copy JSON Path.
+  - In-tree local search with match highlighting, match count, and ancestor auto-expansion.
+- **JSONPath Querying (Supported Subset)**:
+  - Supports: `$` (root), `.property`, `["property"]`, `[0]` (array indexing), `[*]` (wildcards), and basic filter expressions `[?(@.property == value)]` or comparisons `[?(@.count > 10)]`.
+  - Itemized results with individual path/value copying and bulk JSON copy.
+- **Structure Statistics**:
+  - Deterministic metrics: Root Type, Max Depth, Total Nodes, Total Primitives, and counts for Objects, Arrays, Keys, Strings, Numbers, Booleans, and Nulls.
+- **Privacy & Security**:
+  - 100% client-side. Zero telemetry, zero analytics, zero server calls.
 
 ## Local Development
 

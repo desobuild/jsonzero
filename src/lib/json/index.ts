@@ -288,3 +288,6 @@ export function computeJsonStats(input: string, data?: unknown): JsonStats {
 }
 
 export * from '@/lib/json/tokenizer'
+export * from '@/lib/json/path'
+export * from '@/lib/json/jsonpath'
+export * from '@/lib/json/statistics'

@@ -1,0 +1,7 @@
+node_modules
+dist
+design
+.github
+*.svg
+*.md
+package-lock.json

@@ -1,0 +1,167 @@
+@import 'tailwindcss';
+@import '@fontsource/geist-sans/400.css';
+@import '@fontsource/geist-sans/500.css';
+@import '@fontsource/geist-sans/600.css';
+@import '@fontsource/geist-sans/700.css';
+@import '@fontsource/geist-mono/400.css';
+@import '@fontsource/geist-mono/500.css';
+@import '@fontsource/geist-mono/700.css';
+
+/*
+ * JSONZero Design Tokens
+ * Extracted from approved designs (design/screens/)
+ * Dark palette is the primary; light derived for contrast.
+ */
+
+@theme {
+  /* Colors — mapped from CSS custom properties */
+  --color-background: var(--jz-background);
+  --color-surface: var(--jz-surface);
+  --color-surface-elevated: var(--jz-surface-elevated);
+  --color-surface-overlay: var(--jz-surface-overlay);
+  --color-border: var(--jz-border);
+  --color-border-subtle: var(--jz-border-subtle);
+  --color-accent: var(--jz-accent);
+  --color-accent-foreground: var(--jz-accent-foreground);
+  --color-text-primary: var(--jz-text-primary);
+  --color-text-secondary: var(--jz-text-secondary);
+  --color-text-muted: var(--jz-text-muted);
+  --color-text-dim: var(--jz-text-dim);
+  --color-success: var(--jz-success);
+  --color-warning: var(--jz-warning);
+  --color-error: var(--jz-error);
+
+  /* Typography */
+  --font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    'Geist Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+  /* Spacing scale */
+  --spacing-0: 0px;
+  --spacing-0.5: 2px;
+  --spacing-1: 4px;
+  --spacing-1.5: 6px;
+  --spacing-2: 8px;
+  --spacing-2.5: 10px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  /* Border radius */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+
+  /* Font sizes */
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.875rem;
+}
+
+/* ─── Dark theme (default) ─── */
+:root {
+  --jz-background: #12131a;
+  --jz-surface: #1a1b22;
+  --jz-surface-elevated: #1e1f26;
+  --jz-surface-overlay: #33343c;
+  --jz-border: #292931;
+  --jz-border-subtle: rgba(41, 41, 49, 0.4);
+  --jz-accent: #68dba9;
+  --jz-accent-foreground: #003825;
+  --jz-text-primary: #e3e1ec;
+  --jz-text-secondary: #bccac0;
+  --jz-text-muted: #87948b;
+  --jz-text-dim: #3d4a42;
+  --jz-success: #68dba9;
+  --jz-warning: #f0c674;
+  --jz-error: #e06c75;
+
+  color-scheme: dark;
+}
+
+/* ─── Light theme ─── */
+.light {
+  --jz-background: #f8f9fa;
+  --jz-surface: #ffffff;
+  --jz-surface-elevated: #f0f1f3;
+  --jz-surface-overlay: #e4e5e8;
+  --jz-border: #d1d5db;
+  --jz-border-subtle: rgba(209, 213, 219, 0.5);
+  --jz-accent: #0d9668;
+  --jz-accent-foreground: #ffffff;
+  --jz-text-primary: #1a1b22;
+  --jz-text-secondary: #4b5563;
+  --jz-text-muted: #6b7280;
+  --jz-text-dim: #9ca3af;
+  --jz-success: #0d9668;
+  --jz-warning: #d97706;
+  --jz-error: #dc2626;
+
+  color-scheme: light;
+}
+
+/* ─── Base styles ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--jz-background);
+  color: var(--jz-text-primary);
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Code / monospace elements */
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+}
+
+/* Scrollbar styling (subtle, dev-tool aesthetic) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--jz-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--jz-text-dim);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--jz-accent);
+  color: var(--jz-accent-foreground);
+}

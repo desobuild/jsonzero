@@ -1,0 +1,56 @@
+{
+  "name": "jsonzero",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "JSONZero — A privacy-first, client-side JSON developer workbench. JSON. Zero clutter.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/geist-mono": "^5.1.1",
+    "@fontsource/geist-sans": "^5.1.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.513.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^7.6.2",
+    "tailwind-merge": "^3.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@playwright/test": "^1.52.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^9.28.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.5.3",
+    "tailwindcss": "^4.1.10",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.33.1",
+    "vite": "^8.3.0",
+    "vitest": "^3.2.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

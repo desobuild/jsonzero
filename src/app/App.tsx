@@ -7,11 +7,14 @@ import { Toast, type ToastType } from '@/components/ui/toast'
 import { Workbench, useFormatter } from '@/features/formatter'
 import { useSearch } from '@/features/search'
 import { Inspector } from '@/features/inspector'
+import { CompareWorkbench } from '@/features/compare'
 
 export function App() {
   const formatter = useFormatter()
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
-  const [activeView, setActiveView] = useState<'editor' | 'tree'>('editor')
+  const [activeView, setActiveView] = useState<'editor' | 'tree' | 'diff'>(
+    'editor'
+  )
   const [toast, setToast] = useState<{
     message: string
     type: ToastType
@@ -103,7 +106,7 @@ export function App() {
         onViewChange={setActiveView}
       />
 
-      {/* Main Dual-Pane Editor Area OR Inspector Area */}
+      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area */}
       <main className="flex flex-1 flex-col overflow-hidden">
         {activeView === 'editor' ? (
           <Workbench
@@ -111,11 +114,16 @@ export function App() {
             search={search}
             inputTextareaRef={inputTextareaRef}
           />
-        ) : (
+        ) : activeView === 'tree' ? (
           <Inspector
             input={formatter.input}
             onToast={showToast}
             onSwitchToEditor={() => setActiveView('editor')}
+          />
+        ) : (
+          <CompareWorkbench
+            initialJsonA={formatter.input || undefined}
+            onToast={showToast}
           />
         )}
       </main>

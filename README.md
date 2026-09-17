@@ -16,9 +16,9 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 3 — JSON Inspection** complete.
+> **Phase 4 — Structural JSON Compare / Diff** complete.
 >
-> Core Formatter, Editor Search & Replace, and JSON Inspection (Tree View, JSONPath & Statistics) are active.
+> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), and Structural Compare / Diff are active.
 
 ### Features
 
@@ -35,8 +35,18 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
   - Itemized results with individual path/value copying and bulk JSON copy.
 - **Structure Statistics**:
   - Deterministic metrics: Root Type, Max Depth, Total Nodes, Total Primitives, and counts for Objects, Arrays, Keys, Strings, Numbers, Booleans, and Nulls.
+- **Structural JSON Compare / Diff**:
+  - Pure client-side recursive structural comparison between two JSON documents.
+  - **Object key ordering invariance**: Objects are compared by key regardless of property order.
+  - **Array order sensitivity**: Arrays are compared index-by-index in order.
+  - **Type transition detection**: Changes of value type (e.g. `1` → `"1"`, `[]` → `{}`) are accurately classified as `changed`.
+  - **Deterministic change summary**: Counts added, removed, changed, and total differences.
+  - **Precise JSONPaths**: Unambiguous JSONPath notation with bracket formatting for special characters.
+  - **Side-by-side & mobile responsive**: Dual editors on desktop, intuitive tabbed switcher on mobile.
+  - **Independent controls**: Independent formatting, clearing, input swapping, and sample loading.
 - **Privacy & Security**:
   - 100% client-side. Zero telemetry, zero analytics, zero server calls.
+
 
 ## Local Development
 

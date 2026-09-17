@@ -27,8 +27,8 @@ export interface ToolbarProps {
   onFutureToolSelect?: (toolName: string) => void
   isSearchActive?: boolean
   onToggleSearch?: () => void
-  activeView?: 'editor' | 'tree'
-  onViewChange?: (view: 'editor' | 'tree') => void
+  activeView?: 'editor' | 'tree' | 'diff'
+  onViewChange?: (view: 'editor' | 'tree' | 'diff') => void
 }
 
 const indentOptions: { value: IndentOption; label: string }[] = [
@@ -43,7 +43,7 @@ export function Toolbar({
   onValidate,
   indent = '2',
   onIndentChange,
-  onFutureToolSelect,
+  onFutureToolSelect: _onFutureToolSelect,
   isSearchActive = false,
   onToggleSearch,
   activeView = 'editor',
@@ -134,15 +134,35 @@ export function Toolbar({
           </kbd>
         </Button>
 
+        {/* Diff / Compare View Toggle */}
         <Button
+          id="toolbar-diff"
+          aria-label="Compare / Diff"
           variant="ghost"
           size="sm"
-          onClick={() => onFutureToolSelect?.('Diff')}
-          title="Diff — Coming in a future phase"
-          className="gap-1.5 text-text-muted hover:text-text-secondary"
+          onClick={() =>
+            onViewChange?.(activeView === 'diff' ? 'editor' : 'diff')
+          }
+          title={
+            activeView === 'diff'
+              ? 'Switch to Editor'
+              : 'Open Structural Diff / Compare'
+          }
+          className={cn(
+            'gap-1.5 transition-colors relative',
+            activeView === 'diff'
+              ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
+              : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
+          )}
         >
           <GitCompareArrows className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Diff</span>
+          {activeView === 'diff' && (
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-accent"
+              aria-hidden="true"
+            />
+          )}
         </Button>
 
         {/* Tree Inspector View Toggle */}

@@ -42,7 +42,7 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 ### Setup
 
 ```bash
-git clone https://github.com/AnirudhKodetham/JSONZero.git
+git clone https://github.com/desobuild/jsonzero.git
 cd JSONZero
 npm install
 ```

@@ -5,7 +5,7 @@ Thanks for your interest in contributing to JSONZero!
 ## Getting Started
 
 ```bash
-git clone https://github.com/AnirudhKodetham/JSONZero.git
+git clone https://github.com/desobuild/jsonzero.git
 cd JSONZero
 npm install
 npm run dev

@@ -43,7 +43,7 @@ export function Header() {
       {/* Right side actions */}
       <div className="flex items-center gap-1">
         <a
-          href="https://github.com/AnirudhKodetham/JSONZero"
+          href="https://github.com/desobuild/jsonzero"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="View on GitHub"

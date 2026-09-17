@@ -10,18 +10,22 @@ import { Inspector } from '@/features/inspector'
 import { CompareWorkbench } from '@/features/compare'
 import { TransformWorkbench, type TransformType } from '@/features/transform'
 import { ConvertWorkbench, type ConvertType } from '@/features/convert'
+import { TestingWorkbench, type TestingType } from '@/features/testing'
 
 export function App() {
   const formatter = useFormatter()
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
   const [activeView, setActiveView] = useState<
-    'editor' | 'tree' | 'diff' | 'transform' | 'convert'
+    'editor' | 'tree' | 'diff' | 'transform' | 'convert' | 'testing'
   >('editor')
   const [selectedTransformTool, setSelectedTransformTool] = useState<
     TransformType | undefined
   >(undefined)
   const [selectedConvertTool, setSelectedConvertTool] = useState<
     ConvertType | undefined
+  >(undefined)
+  const [selectedTestingTool, setSelectedTestingTool] = useState<
+    TestingType | undefined
   >(undefined)
   const [toast, setToast] = useState<{
     message: string
@@ -97,6 +101,11 @@ export function App() {
     setActiveView('convert')
   }, [])
 
+  const handleSelectTesting = useCallback((type: TestingType) => {
+    setSelectedTestingTool(type)
+    setActiveView('testing')
+  }, [])
+
   const handleToggleSearch = useCallback(() => {
     if (search.isOpen) {
       search.closeSearch()
@@ -123,6 +132,7 @@ export function App() {
         onFutureToolSelect={handleFutureToolSelect}
         onSelectTransform={handleSelectTransform}
         onSelectConvert={handleSelectConvert}
+        onSelectTesting={handleSelectTesting}
         isSearchActive={search.isOpen}
         onToggleSearch={handleToggleSearch}
         activeView={activeView}
@@ -131,7 +141,7 @@ export function App() {
         }}
       />
 
-      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area OR Transform Area OR Convert Area */}
+      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area OR Transform Area OR Convert Area OR Testing Area */}
       <main className="flex flex-1 flex-col overflow-hidden">
         {activeView === 'editor' ? (
           <Workbench
@@ -159,10 +169,16 @@ export function App() {
             }}
             onToast={showToast}
           />
-        ) : (
+        ) : activeView === 'convert' ? (
           <ConvertWorkbench
             initialInput={formatter.input}
             initialConvert={selectedConvertTool}
+            onToast={showToast}
+          />
+        ) : (
+          <TestingWorkbench
+            initialInput={formatter.input}
+            initialTool={selectedTestingTool}
             onToast={showToast}
           />
         )}

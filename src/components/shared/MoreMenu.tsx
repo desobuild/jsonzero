@@ -61,8 +61,14 @@ const sections: MoreMenuSection[] = [
   {
     label: 'Developer',
     items: [
-      { id: 'assertions', label: 'Assertions', icon: ClipboardCheck },
-      { id: 'playwright', label: 'Playwright', icon: FlaskConical },
+      {
+        id: 'schema-validation',
+        label: 'Schema Validation',
+        icon: ClipboardCheck,
+      },
+      { id: 'assertions', label: 'API Assertions', icon: ClipboardCheck },
+      { id: 'playwright', label: 'Playwright Assertions', icon: FlaskConical },
+      { id: 'generic-assertions', label: 'Generic Assertions', icon: FileCode },
       { id: 'expected-vs-actual', label: 'Expected vs Actual', icon: TestTube },
       { id: 'mock-json', label: 'Mock JSON', icon: Shuffle },
     ],
@@ -70,18 +76,21 @@ const sections: MoreMenuSection[] = [
 ]
 
 import type { ConvertType } from '@/features/convert'
+import type { TestingType } from '@/features/testing'
 
 export interface MoreMenuProps {
   onSelectTransform?: (
     type: 'sort-keys' | 'flatten' | 'unflatten' | 'escape' | 'unescape'
   ) => void
   onSelectConvert?: (type: ConvertType) => void
+  onSelectTesting?: (type: TestingType) => void
   onFutureToolSelect?: (toolName: string) => void
 }
 
 export function MoreMenu({
   onSelectTransform,
   onSelectConvert,
+  onSelectTesting,
   onFutureToolSelect,
 }: MoreMenuProps = {}) {
   const handleItemClick = (item: MoreMenuItem) => {
@@ -99,6 +108,29 @@ export function MoreMenu({
       case 'dart':
       case 'json-schema':
         onSelectConvert?.(item.id as ConvertType)
+        break
+      case 'schema-validation':
+        onSelectTesting?.('schema-validation')
+        break
+      case 'assertions':
+      case 'api-assertions':
+        onSelectTesting?.('api-assertions')
+        break
+      case 'playwright':
+      case 'playwright-assertions':
+        onSelectTesting?.('playwright-assertions')
+        break
+      case 'generic-assertions':
+        onSelectTesting?.('generic-assertions')
+        break
+      case 'expected-vs-actual':
+        onSelectTesting?.('expected-actual')
+        break
+      case 'diff-assertions':
+        onSelectTesting?.('diff-assertions')
+        break
+      case 'mock-json':
+        onSelectTesting?.('mock-json')
         break
       default:
         onFutureToolSelect?.(item.label)

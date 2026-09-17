@@ -16,9 +16,9 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 6 — JSON Conversion** complete.
+> **Phase 7 — Developer & Testing Tools** complete.
 >
-> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, and JSON Conversion tools are active.
+> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, and Developer & Testing Tools are active.
 
 ### Features
 
@@ -81,7 +81,34 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
   - **JSON → JSON Schema**:
     - Generates standard JSON Schema Draft 2020-12 (`https://json-schema.org/draft/2020-12/schema`).
     - Infers primitive types, integer vs number distinctions, objects with `properties` and `required` arrays, and arrays with homogeneous `items` or heterogeneous `anyOf` unions.
-    - Note: Generated code and schemas reflect the observed JSON document sample rather than an exhaustive API contract.
+- **Developer & Testing Tools (Phase 7)**:
+  - **JSON Schema Validation**:
+    - Validates JSON data against a local JSON Schema Draft 2020-12 compatible subset with zero network requests.
+    - Supported keywords:
+      - Types: `object`, `array`, `string`, `number`, `integer`, `boolean`, `null` (single or union arrays).
+      - Object: `properties`, `required`, `additionalProperties` (boolean or schema), `minProperties`, `maxProperties`.
+      - Array: `items`, `minItems`, `maxItems`, `uniqueItems`.
+      - String: `minLength`, `maxLength`, `pattern`.
+      - Number: `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`.
+      - Composition: `anyOf`, `oneOf`, `allOf`.
+      - Boolean schemas: `true` / `false`.
+    - Limitations: `$ref` resolution and remote schemas are explicitly not supported in this offline browser subset.
+    - Actionable error diagnostics: Itemized error reporting with JSONPath, keyword, expected condition, actual value, and copyable report.
+  - **API Assertion Generator**:
+    - Deterministically generates TypeScript `expect(...)` assertions for REST/JSON API response verification.
+    - Configurable structure, types, values, array lengths, and sample limits.
+  - **Playwright Assertion Generator**:
+    - Generates Playwright API test snippets with response status verification (`expect(response.ok()).toBeTruthy()`) and JSON body assertions.
+  - **Generic Test Assertions**:
+    - Framework-agnostic test assertions (`ASSERT $.id EXISTS`, `ASSERT $.id TYPE number`, `ASSERT $.id EQUALS 42`).
+  - **Mock JSON Generator**:
+    - Deterministically generates mock data while preserving the schema and inferred types without hallucinating fake personal details.
+    - Configurable strategies for strings, numbers, booleans, and array sampling.
+  - **Expected vs Actual Workflow**:
+    - Dedicated workflow comparing expected API contracts against live responses.
+    - Reuses Phase 4 recursive structural diff engine to display change summaries (Added, Removed, Changed).
+  - **Diff → Assertions**:
+    - Generates targeted assertions enforcing the expected state for all detected response differences.
 - **Privacy & Security**:
   - 100% client-side. Zero telemetry, zero analytics, zero server calls.
 

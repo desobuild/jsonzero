@@ -8,6 +8,7 @@ import {
   Wand2,
   ArrowRightLeft,
   ChevronDown,
+  TestTube,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { MoreMenu } from '@/components/shared/MoreMenu'
@@ -20,6 +21,7 @@ import {
 import { cn } from '@/lib/utils'
 import type { IndentOption } from '@/lib/json'
 import type { ConvertType } from '@/features/convert'
+import type { TestingType } from '@/features/testing'
 
 export interface ToolbarProps {
   onFormat?: () => void
@@ -32,11 +34,12 @@ export interface ToolbarProps {
     type: 'sort-keys' | 'flatten' | 'unflatten' | 'escape' | 'unescape'
   ) => void
   onSelectConvert?: (type: ConvertType) => void
+  onSelectTesting?: (type: TestingType) => void
   isSearchActive?: boolean
   onToggleSearch?: () => void
-  activeView?: 'editor' | 'tree' | 'diff' | 'transform' | 'convert'
+  activeView?: 'editor' | 'tree' | 'diff' | 'transform' | 'convert' | 'testing'
   onViewChange?: (
-    view: 'editor' | 'tree' | 'diff' | 'transform' | 'convert'
+    view: 'editor' | 'tree' | 'diff' | 'transform' | 'convert' | 'testing'
   ) => void
 }
 
@@ -55,6 +58,7 @@ export function Toolbar({
   onFutureToolSelect,
   onSelectTransform,
   onSelectConvert,
+  onSelectTesting,
   isSearchActive = false,
   onToggleSearch,
   activeView = 'editor',
@@ -267,9 +271,41 @@ export function Toolbar({
           )}
         </Button>
 
+        {/* Test / Developer View Toggle */}
+        <Button
+          id="toolbar-testing"
+          aria-label="Developer & Testing Tools"
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            onViewChange?.(activeView === 'testing' ? 'editor' : 'testing')
+          }
+          title={
+            activeView === 'testing'
+              ? 'Switch to Editor'
+              : 'Open Developer & Testing Tools'
+          }
+          className={cn(
+            'gap-1.5 transition-colors relative',
+            activeView === 'testing'
+              ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
+              : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
+          )}
+        >
+          <TestTube className="h-3.5 w-3.5" />
+          <span className="hidden md:inline">Test</span>
+          {activeView === 'testing' && (
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-accent"
+              aria-hidden="true"
+            />
+          )}
+        </Button>
+
         <MoreMenu
           onSelectTransform={onSelectTransform}
           onSelectConvert={onSelectConvert}
+          onSelectTesting={onSelectTesting}
           onFutureToolSelect={onFutureToolSelect}
         />
       </div>

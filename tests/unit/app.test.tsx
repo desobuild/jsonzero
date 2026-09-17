@@ -76,4 +76,21 @@ describe('JSONZero Application', () => {
     fireEvent.click(convertBtn)
     expect(screen.queryByTestId('convert-workbench')).not.toBeInTheDocument()
   })
+
+  it('renders Test button in toolbar and toggles Testing workbench', () => {
+    renderApp()
+
+    const testBtn = screen.getByRole('button', {
+      name: 'Developer & Testing Tools',
+    })
+    expect(testBtn).toBeInTheDocument()
+
+    // Click to open Testing workbench
+    fireEvent.click(testBtn)
+    expect(screen.getByTestId('testing-workbench')).toBeInTheDocument()
+
+    // Click again to toggle back to Editor
+    fireEvent.click(testBtn)
+    expect(screen.queryByTestId('testing-workbench')).not.toBeInTheDocument()
+  })
 })

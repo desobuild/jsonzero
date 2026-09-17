@@ -16,9 +16,9 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 4 — Structural JSON Compare / Diff** complete.
+> **Phase 5 — JSON Transform** complete.
 >
-> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), and Structural Compare / Diff are active.
+> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, and JSON Transform tools are active.
 
 ### Features
 
@@ -44,6 +44,19 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
   - **Precise JSONPaths**: Unambiguous JSONPath notation with bracket formatting for special characters.
   - **Side-by-side & mobile responsive**: Dual editors on desktop, intuitive tabbed switcher on mobile.
   - **Independent controls**: Independent formatting, clearing, input swapping, and sample loading.
+- **JSON Transform Tools**:
+  - **Sort Keys**: Alphabetical object-key sorting in lexicographic ascending order. Shallow sort keeps nested structures in original order.
+  - **Recursive Sort**: Recursively sorts keys across all nested objects. Strictly preserves array element order, while sorting objects within arrays.
+  - **Flatten**: Flattens nested JSON into single-depth key-value representation.
+    - *Path Notation*: Nested object properties use dot notation (`user.name`), and arrays use bracket indices (`users[0].name`).
+    - *Delimiter Escaping*: Special characters in object keys (`.`, `[`, `]`, `\`) are escaped (`\.`, `\[`, `\]`, `\\`) to ensure unambiguous representation.
+    - *Empty Containers*: Empty objects `{}` and arrays `[]` are preserved as leaf values.
+  - **Unflatten**: Reconstructs nested structure from flattened key paths.
+    - *Collision Protection*: Detects and prevents collisions (e.g., when a path is both a primitive and an object, or conflicting array vs object types). Halts safely with actionable error diagnostics without mutating input.
+  - **Escape JSON**: Compacts and serializes JSON as an escaped JSON string literal (e.g., `"{\"name\":\"Alice\"}"`) for embedding in code or configuration.
+  - **Unescape JSON**: Unescapes both quoted and unquoted escaped JSON strings, validating JSON syntax before formatting.
+  - **Escaped JSON Detection**: Automatically recognizes escaped JSON payloads and provides a quick `Unescape & Format` action.
+  - **Safe Non-Destructive Workflow**: Dedicated preview pane ensures input is never silently overwritten. Users explicitly inspect results and choose **Apply**, **Copy Result**, or **Reset**.
 - **Privacy & Security**:
   - 100% client-side. Zero telemetry, zero analytics, zero server calls.
 

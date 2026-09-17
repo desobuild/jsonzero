@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { Providers } from '@/app/providers'
 import { AppRoutes } from '@/app/routes'
 
@@ -45,5 +45,20 @@ describe('JSONZero Application', () => {
     renderApp()
 
     expect(screen.getByText('Ready')).toBeInTheDocument()
+  })
+
+  it('renders Transform button in toolbar and toggles Transform workbench', () => {
+    renderApp()
+
+    const transformBtn = screen.getByRole('button', { name: 'Transform' })
+    expect(transformBtn).toBeInTheDocument()
+
+    // Click to open Transform
+    fireEvent.click(transformBtn)
+    expect(screen.getByTestId('transform-workbench')).toBeInTheDocument()
+
+    // Click again to toggle back to Editor
+    fireEvent.click(transformBtn)
+    expect(screen.queryByTestId('transform-workbench')).not.toBeInTheDocument()
   })
 })

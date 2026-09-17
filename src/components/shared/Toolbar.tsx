@@ -5,6 +5,7 @@ import {
   Search,
   GitCompareArrows,
   FolderTree,
+  Wand2,
   ChevronDown,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -25,10 +26,13 @@ export interface ToolbarProps {
   indent?: IndentOption
   onIndentChange?: (indent: IndentOption) => void
   onFutureToolSelect?: (toolName: string) => void
+  onSelectTransform?: (
+    type: 'sort-keys' | 'flatten' | 'unflatten' | 'escape' | 'unescape'
+  ) => void
   isSearchActive?: boolean
   onToggleSearch?: () => void
-  activeView?: 'editor' | 'tree' | 'diff'
-  onViewChange?: (view: 'editor' | 'tree' | 'diff') => void
+  activeView?: 'editor' | 'tree' | 'diff' | 'transform'
+  onViewChange?: (view: 'editor' | 'tree' | 'diff' | 'transform') => void
 }
 
 const indentOptions: { value: IndentOption; label: string }[] = [
@@ -43,7 +47,8 @@ export function Toolbar({
   onValidate,
   indent = '2',
   onIndentChange,
-  onFutureToolSelect: _onFutureToolSelect,
+  onFutureToolSelect,
+  onSelectTransform,
   isSearchActive = false,
   onToggleSearch,
   activeView = 'editor',
@@ -194,7 +199,41 @@ export function Toolbar({
           )}
         </Button>
 
-        <MoreMenu />
+        {/* Transform View Toggle */}
+        <Button
+          id="toolbar-transform"
+          aria-label="Transform"
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            onViewChange?.(activeView === 'transform' ? 'editor' : 'transform')
+          }
+          title={
+            activeView === 'transform'
+              ? 'Switch to Editor'
+              : 'Open JSON Transform Tools'
+          }
+          className={cn(
+            'gap-1.5 transition-colors relative',
+            activeView === 'transform'
+              ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
+              : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
+          )}
+        >
+          <Wand2 className="h-3.5 w-3.5" />
+          <span className="hidden md:inline">Transform</span>
+          {activeView === 'transform' && (
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-accent"
+              aria-hidden="true"
+            />
+          )}
+        </Button>
+
+        <MoreMenu
+          onSelectTransform={onSelectTransform}
+          onFutureToolSelect={onFutureToolSelect}
+        />
       </div>
 
       {/* Right Controls: Indentation Selector */}

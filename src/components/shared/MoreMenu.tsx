@@ -69,11 +69,43 @@ const sections: MoreMenuSection[] = [
   },
 ]
 
-export function MoreMenu() {
+export interface MoreMenuProps {
+  onSelectTransform?: (
+    type: 'sort-keys' | 'flatten' | 'unflatten' | 'escape' | 'unescape'
+  ) => void
+  onFutureToolSelect?: (toolName: string) => void
+}
+
+export function MoreMenu({
+  onSelectTransform,
+  onFutureToolSelect,
+}: MoreMenuProps = {}) {
+  const handleItemClick = (item: MoreMenuItem) => {
+    switch (item.id) {
+      case 'sort-keys':
+      case 'flatten':
+      case 'unflatten':
+      case 'escape':
+      case 'unescape':
+        onSelectTransform?.(item.id)
+        break
+      default:
+        onFutureToolSelect?.(item.label)
+        break
+    }
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1.5">
+        <Button
+          id="toolbar-more"
+          data-testid="toolbar-more"
+          aria-label="More tools"
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 text-text-secondary hover:bg-surface-elevated hover:text-text-primary"
+        >
           <MoreHorizontal className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">More</span>
         </Button>
@@ -84,7 +116,11 @@ export function MoreMenu() {
             {sectionIndex > 0 && <DropdownMenuSeparator />}
             <DropdownMenuLabel>{section.label}</DropdownMenuLabel>
             {section.items.map((item) => (
-              <DropdownMenuItem key={item.id}>
+              <DropdownMenuItem
+                key={item.id}
+                data-testid={`more-menu-${item.id}`}
+                onClick={() => handleItemClick(item)}
+              >
                 <item.icon className="h-3.5 w-3.5" />
                 {item.label}
               </DropdownMenuItem>

@@ -8,13 +8,17 @@ import { Workbench, useFormatter } from '@/features/formatter'
 import { useSearch } from '@/features/search'
 import { Inspector } from '@/features/inspector'
 import { CompareWorkbench } from '@/features/compare'
+import { TransformWorkbench, type TransformType } from '@/features/transform'
 
 export function App() {
   const formatter = useFormatter()
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
-  const [activeView, setActiveView] = useState<'editor' | 'tree' | 'diff'>(
-    'editor'
-  )
+  const [activeView, setActiveView] = useState<
+    'editor' | 'tree' | 'diff' | 'transform'
+  >('editor')
+  const [selectedTransformTool, setSelectedTransformTool] = useState<
+    TransformType | undefined
+  >(undefined)
   const [toast, setToast] = useState<{
     message: string
     type: ToastType
@@ -76,6 +80,14 @@ export function App() {
     [showToast]
   )
 
+  const handleSelectTransform = useCallback(
+    (type: 'sort-keys' | 'flatten' | 'unflatten' | 'escape' | 'unescape') => {
+      setSelectedTransformTool(type)
+      setActiveView('transform')
+    },
+    []
+  )
+
   const handleToggleSearch = useCallback(() => {
     if (search.isOpen) {
       search.closeSearch()
@@ -100,13 +112,16 @@ export function App() {
         indent={formatter.indent}
         onIndentChange={formatter.setIndent}
         onFutureToolSelect={handleFutureToolSelect}
+        onSelectTransform={handleSelectTransform}
         isSearchActive={search.isOpen}
         onToggleSearch={handleToggleSearch}
         activeView={activeView}
-        onViewChange={setActiveView}
+        onViewChange={(view) => {
+          setActiveView(view)
+        }}
       />
 
-      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area */}
+      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area OR Transform Area */}
       <main className="flex flex-1 flex-col overflow-hidden">
         {activeView === 'editor' ? (
           <Workbench
@@ -120,9 +135,18 @@ export function App() {
             onToast={showToast}
             onSwitchToEditor={() => setActiveView('editor')}
           />
-        ) : (
+        ) : activeView === 'diff' ? (
           <CompareWorkbench
             initialJsonA={formatter.input || undefined}
+            onToast={showToast}
+          />
+        ) : (
+          <TransformWorkbench
+            initialInput={formatter.input}
+            initialTransform={selectedTransformTool}
+            onApply={(newContent) => {
+              formatter.setInput(newContent)
+            }}
             onToast={showToast}
           />
         )}

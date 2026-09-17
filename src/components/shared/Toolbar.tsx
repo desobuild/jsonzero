@@ -6,6 +6,7 @@ import {
   GitCompareArrows,
   FolderTree,
   Wand2,
+  ArrowRightLeft,
   ChevronDown,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import type { IndentOption } from '@/lib/json'
+import type { ConvertType } from '@/features/convert'
 
 export interface ToolbarProps {
   onFormat?: () => void
@@ -29,10 +31,13 @@ export interface ToolbarProps {
   onSelectTransform?: (
     type: 'sort-keys' | 'flatten' | 'unflatten' | 'escape' | 'unescape'
   ) => void
+  onSelectConvert?: (type: ConvertType) => void
   isSearchActive?: boolean
   onToggleSearch?: () => void
-  activeView?: 'editor' | 'tree' | 'diff' | 'transform'
-  onViewChange?: (view: 'editor' | 'tree' | 'diff' | 'transform') => void
+  activeView?: 'editor' | 'tree' | 'diff' | 'transform' | 'convert'
+  onViewChange?: (
+    view: 'editor' | 'tree' | 'diff' | 'transform' | 'convert'
+  ) => void
 }
 
 const indentOptions: { value: IndentOption; label: string }[] = [
@@ -49,6 +54,7 @@ export function Toolbar({
   onIndentChange,
   onFutureToolSelect,
   onSelectTransform,
+  onSelectConvert,
   isSearchActive = false,
   onToggleSearch,
   activeView = 'editor',
@@ -230,8 +236,40 @@ export function Toolbar({
           )}
         </Button>
 
+        {/* Convert View Toggle */}
+        <Button
+          id="toolbar-convert"
+          aria-label="Convert"
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            onViewChange?.(activeView === 'convert' ? 'editor' : 'convert')
+          }
+          title={
+            activeView === 'convert'
+              ? 'Switch to Editor'
+              : 'Open JSON Convert Tools'
+          }
+          className={cn(
+            'gap-1.5 transition-colors relative',
+            activeView === 'convert'
+              ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
+              : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
+          )}
+        >
+          <ArrowRightLeft className="h-3.5 w-3.5" />
+          <span className="hidden md:inline">Convert</span>
+          {activeView === 'convert' && (
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-accent"
+              aria-hidden="true"
+            />
+          )}
+        </Button>
+
         <MoreMenu
           onSelectTransform={onSelectTransform}
+          onSelectConvert={onSelectConvert}
           onFutureToolSelect={onFutureToolSelect}
         />
       </div>

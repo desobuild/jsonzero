@@ -9,15 +9,19 @@ import { useSearch } from '@/features/search'
 import { Inspector } from '@/features/inspector'
 import { CompareWorkbench } from '@/features/compare'
 import { TransformWorkbench, type TransformType } from '@/features/transform'
+import { ConvertWorkbench, type ConvertType } from '@/features/convert'
 
 export function App() {
   const formatter = useFormatter()
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
   const [activeView, setActiveView] = useState<
-    'editor' | 'tree' | 'diff' | 'transform'
+    'editor' | 'tree' | 'diff' | 'transform' | 'convert'
   >('editor')
   const [selectedTransformTool, setSelectedTransformTool] = useState<
     TransformType | undefined
+  >(undefined)
+  const [selectedConvertTool, setSelectedConvertTool] = useState<
+    ConvertType | undefined
   >(undefined)
   const [toast, setToast] = useState<{
     message: string
@@ -88,6 +92,11 @@ export function App() {
     []
   )
 
+  const handleSelectConvert = useCallback((type: ConvertType) => {
+    setSelectedConvertTool(type)
+    setActiveView('convert')
+  }, [])
+
   const handleToggleSearch = useCallback(() => {
     if (search.isOpen) {
       search.closeSearch()
@@ -113,6 +122,7 @@ export function App() {
         onIndentChange={formatter.setIndent}
         onFutureToolSelect={handleFutureToolSelect}
         onSelectTransform={handleSelectTransform}
+        onSelectConvert={handleSelectConvert}
         isSearchActive={search.isOpen}
         onToggleSearch={handleToggleSearch}
         activeView={activeView}
@@ -121,7 +131,7 @@ export function App() {
         }}
       />
 
-      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area OR Transform Area */}
+      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area OR Transform Area OR Convert Area */}
       <main className="flex flex-1 flex-col overflow-hidden">
         {activeView === 'editor' ? (
           <Workbench
@@ -140,13 +150,19 @@ export function App() {
             initialJsonA={formatter.input || undefined}
             onToast={showToast}
           />
-        ) : (
+        ) : activeView === 'transform' ? (
           <TransformWorkbench
             initialInput={formatter.input}
             initialTransform={selectedTransformTool}
             onApply={(newContent) => {
               formatter.setInput(newContent)
             }}
+            onToast={showToast}
+          />
+        ) : (
+          <ConvertWorkbench
+            initialInput={formatter.input}
+            initialConvert={selectedConvertTool}
             onToast={showToast}
           />
         )}

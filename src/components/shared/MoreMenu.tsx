@@ -69,15 +69,19 @@ const sections: MoreMenuSection[] = [
   },
 ]
 
+import type { ConvertType } from '@/features/convert'
+
 export interface MoreMenuProps {
   onSelectTransform?: (
     type: 'sort-keys' | 'flatten' | 'unflatten' | 'escape' | 'unescape'
   ) => void
+  onSelectConvert?: (type: ConvertType) => void
   onFutureToolSelect?: (toolName: string) => void
 }
 
 export function MoreMenu({
   onSelectTransform,
+  onSelectConvert,
   onFutureToolSelect,
 }: MoreMenuProps = {}) {
   const handleItemClick = (item: MoreMenuItem) => {
@@ -88,6 +92,13 @@ export function MoreMenu({
       case 'escape':
       case 'unescape':
         onSelectTransform?.(item.id)
+        break
+      case 'table':
+      case 'csv':
+      case 'typescript':
+      case 'dart':
+      case 'json-schema':
+        onSelectConvert?.(item.id as ConvertType)
         break
       default:
         onFutureToolSelect?.(item.label)

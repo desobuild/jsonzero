@@ -16,9 +16,9 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 5 — JSON Transform** complete.
+> **Phase 6 — JSON Conversion** complete.
 >
-> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, and JSON Transform tools are active.
+> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, and JSON Conversion tools are active.
 
 ### Features
 
@@ -57,6 +57,31 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
   - **Unescape JSON**: Unescapes both quoted and unquoted escaped JSON strings, validating JSON syntax before formatting.
   - **Escaped JSON Detection**: Automatically recognizes escaped JSON payloads and provides a quick `Unescape & Format` action.
   - **Safe Non-Destructive Workflow**: Dedicated preview pane ensures input is never silently overwritten. Users explicitly inspect results and choose **Apply**, **Copy Result**, or **Reset**.
+- **JSON Conversion Tools (Phase 6)**:
+  - **JSON → Table**:
+    - Interactive tabular representation. Primary input is `Array<Object>`.
+    - Columns represent the union of all keys across objects, preserving order of first appearance without discarding fields.
+    - Nested values (objects and arrays) are formatted as compact readable JSON strings (`{"city":"Belagavi"}`), keeping cells clean while preserving raw underlying values.
+    - Non-array object roots are presented as Key-Value tables; primitive roots are rendered as single-column value tables; empty structures are gracefully indicated.
+    - Interactive controls include single-click cell copying, row copying, whole table TSV copying, and horizontal scrolling for wide datasets.
+  - **JSON → CSV**:
+    - Converts JSON arrays to standard RFC 4180 CSV with configurable delimiters (comma `,`, tab `\t`, semicolon `;`) and optional header inclusion.
+    - Robust escaping: values containing delimiters, double quotes, or newlines are quoted, with embedded quotes escaped as `""`.
+    - Nested objects and arrays are serialized as compact JSON inside safely escaped CSV cells.
+  - **JSON → TypeScript**:
+    - Generates clean, deterministic TypeScript interfaces and types based on the observed JSON sample.
+    - Conservative type inference (`string`, `number`, `boolean`, `null`, arrays, nested objects).
+    - Deterministic PascalCase interface names derived from property names, with parent-prefix collision avoidance.
+    - Automatically quotes object keys that are not valid JavaScript identifiers (e.g. `"first-name": string;`).
+    - Handles mixed-type arrays with union types `(number | string | boolean)[]` and heterogeneous object arrays with optional property markers `?`.
+  - **JSON → Dart**:
+    - Generates dependency-free Dart model classes with constructor, factory `fromJson(Map<String, dynamic> json)`, and `Map<String, dynamic> toJson()`.
+    - Sanitizes property keys into valid camelCase field names while preserving original JSON keys during serialization.
+    - Distinguishes `int`, `double`, and `num`. Handles nullability (`String?`, `dynamic`) based on observed sample data.
+  - **JSON → JSON Schema**:
+    - Generates standard JSON Schema Draft 2020-12 (`https://json-schema.org/draft/2020-12/schema`).
+    - Infers primitive types, integer vs number distinctions, objects with `properties` and `required` arrays, and arrays with homogeneous `items` or heterogeneous `anyOf` unions.
+    - Note: Generated code and schemas reflect the observed JSON document sample rather than an exhaustive API contract.
 - **Privacy & Security**:
   - 100% client-side. Zero telemetry, zero analytics, zero server calls.
 

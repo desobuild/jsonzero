@@ -61,4 +61,19 @@ describe('JSONZero Application', () => {
     fireEvent.click(transformBtn)
     expect(screen.queryByTestId('transform-workbench')).not.toBeInTheDocument()
   })
+
+  it('renders Convert button in toolbar and toggles Convert workbench', () => {
+    renderApp()
+
+    const convertBtn = screen.getByRole('button', { name: 'Convert' })
+    expect(convertBtn).toBeInTheDocument()
+
+    // Click to open Convert
+    fireEvent.click(convertBtn)
+    expect(screen.getByTestId('convert-workbench')).toBeInTheDocument()
+
+    // Click again to toggle back to Editor
+    fireEvent.click(convertBtn)
+    expect(screen.queryByTestId('convert-workbench')).not.toBeInTheDocument()
+  })
 })

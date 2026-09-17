@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { cn } from '@/lib/utils'
 import type { IndentOption } from '@/lib/json'
 
 export interface ToolbarProps {
@@ -24,6 +25,8 @@ export interface ToolbarProps {
   indent?: IndentOption
   onIndentChange?: (indent: IndentOption) => void
   onFutureToolSelect?: (toolName: string) => void
+  isSearchActive?: boolean
+  onToggleSearch?: () => void
 }
 
 const indentOptions: { value: IndentOption; label: string }[] = [
@@ -39,6 +42,8 @@ export function Toolbar({
   indent = '2',
   onIndentChange,
   onFutureToolSelect,
+  isSearchActive = false,
+  onToggleSearch,
 }: ToolbarProps) {
   const currentIndentLabel =
     indentOptions.find((opt) => opt.value === indent)?.label ?? '2 spaces'
@@ -95,16 +100,32 @@ export function Toolbar({
         {/* Divider */}
         <div className="mx-1 h-4 w-px bg-border" />
 
-        {/* Future tools — visibly present as per Screen 01 design */}
+        {/* Search Action (Interactive in Phase 2) */}
         <Button
+          id="toolbar-search"
+          aria-label="Search"
           variant="ghost"
           size="sm"
-          onClick={() => onFutureToolSelect?.('Search')}
-          title="Search — Coming in a future phase"
-          className="gap-1.5 text-text-muted hover:text-text-secondary"
+          onClick={onToggleSearch}
+          className={cn(
+            'gap-1.5 transition-colors',
+            isSearchActive
+              ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs'
+              : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
+          )}
         >
           <Search className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Search</span>
+          <span className="hidden sm:inline">Search</span>
+          <kbd
+            className={cn(
+              'hidden lg:inline-flex items-center rounded px-1 py-0.2 text-3xs font-mono',
+              isSearchActive
+                ? 'bg-accent/20 text-accent font-semibold'
+                : 'bg-surface-elevated text-text-muted'
+            )}
+          >
+            Ctrl+F
+          </kbd>
         </Button>
 
         <Button

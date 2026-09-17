@@ -1,9 +1,10 @@
 import { useRef, useState, useCallback } from 'react'
-import { Upload, Trash2, Copy, Check, Download } from 'lucide-react'
+import { Upload, Trash2, Copy, Check, Download, WrapText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Toast, type ToastType } from '@/components/ui/toast'
 import { ErrorDisplay } from '@/components/shared/ErrorDisplay'
 import { CodeEditor } from '@/features/formatter/components/CodeEditor'
+import { SearchPanel, useSearch } from '@/features/search'
 import type {
   FormatterState,
   FormatterActions,
@@ -12,6 +13,8 @@ import { cn } from '@/lib/utils'
 
 export interface WorkbenchProps {
   formatter: FormatterState & FormatterActions
+  search?: ReturnType<typeof useSearch>
+  inputTextareaRef?: React.RefObject<HTMLTextAreaElement | null>
 }
 
 function formatBytes(bytes: number): string {
@@ -20,7 +23,11 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1024).toFixed(1)} KB`
 }
 
-export function Workbench({ formatter }: WorkbenchProps) {
+export function Workbench({
+  formatter,
+  search: externalSearch,
+  inputTextareaRef: externalInputTextareaRef,
+}: WorkbenchProps) {
   const {
     input,
     output,
@@ -34,6 +41,7 @@ export function Workbench({ formatter }: WorkbenchProps) {
   } = formatter
 
   const [copied, setCopied] = useState(false)
+  const [wordWrap, setWordWrap] = useState(false)
   const [activeMobileTab, setActiveMobileTab] = useState<'input' | 'output'>(
     'input'
   )
@@ -42,6 +50,17 @@ export function Workbench({ formatter }: WorkbenchProps) {
     type: ToastType
   } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const fallbackInputTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const inputTextareaRef = externalInputTextareaRef || fallbackInputTextareaRef
+
+  // Internal search fallback if not provided externally
+  const fallbackSearch = useSearch({
+    text: input,
+    setText: setInput,
+    textareaRef: inputTextareaRef,
+    onToast: (message, type) => setToast({ message, type }),
+  })
+  const search = externalSearch || fallbackSearch
 
   const handleCopy = useCallback(async () => {
     if (!output) return
@@ -178,6 +197,22 @@ export function Workbench({ formatter }: WorkbenchProps) {
                 aria-label="Upload JSON file"
               />
               <Button
+                variant={wordWrap ? 'outline' : 'ghost'}
+                size="sm"
+                aria-label="Toggle Word Wrap"
+                onClick={() => setWordWrap((prev) => !prev)}
+                title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'}
+                className={cn(
+                  'h-6 gap-1 px-2 text-2xs transition-colors',
+                  wordWrap
+                    ? 'border border-accent/40 bg-accent/15 text-accent'
+                    : 'text-text-secondary hover:text-text-primary'
+                )}
+              >
+                <WrapText className="h-3 w-3" />
+                <span className="hidden xs:inline">Wrap</span>
+              </Button>
+              <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleOpenFileClick}
@@ -203,7 +238,28 @@ export function Workbench({ formatter }: WorkbenchProps) {
           </div>
 
           {/* Editor Body */}
-          <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="relative flex flex-1 flex-col overflow-hidden">
+            {/* Search and Replace Floating Panel */}
+            <SearchPanel
+              isOpen={search.isOpen}
+              isReplaceOpen={search.isReplaceOpen}
+              query={search.query}
+              replaceText={search.replaceText}
+              options={search.options}
+              matches={search.matches}
+              currentMatchIndex={search.currentMatchIndex}
+              onQueryChange={search.setQuery}
+              onReplaceTextChange={search.setReplaceText}
+              onToggleReplace={search.toggleReplace}
+              onToggleMatchCase={search.toggleMatchCase}
+              onToggleWholeWord={search.toggleWholeWord}
+              onNextMatch={search.nextMatch}
+              onPrevMatch={search.prevMatch}
+              onReplaceCurrent={search.replaceCurrent}
+              onReplaceAll={search.replaceAll}
+              onClose={search.closeSearch}
+            />
+
             <CodeEditor
               id="json-input-editor"
               label="JSON Input Editor"
@@ -212,6 +268,10 @@ export function Workbench({ formatter }: WorkbenchProps) {
               onFileDrop={handleFileDrop}
               hasError={Boolean(error)}
               errorLine={error?.line}
+              wordWrap={wordWrap}
+              searchMatches={search.isOpen ? search.matches : []}
+              currentMatchIndex={search.isOpen ? search.currentMatchIndex : -1}
+              textareaRef={inputTextareaRef}
               placeholder="Paste JSON here, or drag & drop a .json file..."
             />
 
@@ -302,6 +362,7 @@ export function Workbench({ formatter }: WorkbenchProps) {
               label="Formatted JSON Output"
               value={output}
               readOnly={true}
+              wordWrap={wordWrap}
               emptyMessage="Format JSON to see the result."
             />
           </div>

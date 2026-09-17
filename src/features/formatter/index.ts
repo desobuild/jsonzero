@@ -1,8 +1,15 @@
 /**
- * Formatter Feature
+ * JSONZero — Formatter Feature
  *
- * This module will contain the core JSON formatter functionality.
- * Implementation will be added in Phase 1.
+ * Core JSON formatter MVP implementation:
+ * - Format / pretty-print
+ * - Minify
+ * - Validate
+ * - Copy & Download
+ * - Local file load & Drag-and-drop
  */
 
-export { formatJSON, minifyJSON, validateJSON, parseJSON } from '@/lib/json'
+export * from './types'
+export { useFormatter, DEFAULT_SAMPLE_JSON } from './hooks/useFormatter'
+export { CodeEditor } from './components/CodeEditor'
+export { Workbench } from './components/Workbench'

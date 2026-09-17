@@ -1,43 +1,55 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('JSONZero Smoke Tests', () => {
-  test('application loads successfully', async ({ page }) => {
+test.describe('JSONZero Formatter MVP — Screen 01 E2E', () => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/')
+  })
 
-    // Page title is correct
+  test('application loads with title, header, and initial sample JSON', async ({
+    page,
+  }) => {
     await expect(page).toHaveTitle(/JSONZero/)
+    await expect(page.locator('#header')).toBeVisible()
+
+    const inputEditor = page.locator('#json-input-editor')
+    await expect(inputEditor).toBeVisible()
+    await expect(inputEditor).toHaveValue(/CUS-1042/)
   })
 
-  test('header is visible with branding', async ({ page }) => {
-    await page.goto('/')
+  test('core workflow: Format -> Minify -> Validate -> Error -> Clear', async ({
+    page,
+  }) => {
+    const inputEditor = page.locator('#json-input-editor')
+    const outputEditor = page.locator('#json-output-editor')
 
-    // Header branding
-    const header = page.locator('#header')
-    await expect(header).toBeVisible()
-    await expect(header.getByText('JSONZero')).toBeVisible()
-  })
+    // 1. Initial output is empty with prompt
+    await expect(page.getByText('Format JSON to see the result.')).toBeVisible()
 
-  test('toolbar renders primary actions', async ({ page }) => {
-    await page.goto('/')
+    // 2. Click Format -> output receives formatted JSON
+    await page.getByRole('button', { name: 'Format JSON' }).click()
+    await expect(outputEditor).toBeVisible()
+    await expect(outputEditor).toHaveValue(/"customer": \{/)
 
-    const toolbar = page.locator('#toolbar')
-    await expect(toolbar).toBeVisible()
-    await expect(toolbar.getByText('Format')).toBeVisible()
-    await expect(toolbar.getByText('Validate')).toBeVisible()
-  })
+    // 3. Click Minify -> output receives compact single-line JSON
+    await page.getByRole('button', { name: 'Minify JSON' }).click()
+    await expect(outputEditor).toHaveValue(/\{"customer":\{"id":"CUS-1042"/)
 
-  test('privacy indicator is displayed', async ({ page }) => {
-    await page.goto('/')
+    // 4. Click Validate -> status bar confirms Valid JSON
+    await page.getByRole('button', { name: 'Validate JSON' }).click()
+    await expect(page.locator('#status-bar')).toContainText('Valid JSON')
 
-    await expect(
-      page.getByText('Your JSON stays in your browser.')
-    ).toBeVisible()
-  })
+    // 5. Introduce invalid JSON -> Format -> Error display appears
+    await inputEditor.fill('{\n  "broken": JSON\n')
+    await page.getByRole('button', { name: 'Format JSON' }).click()
+    await expect(page.getByText(/Invalid JSON Syntax/i)).toBeVisible()
+    await expect(page.locator('#status-bar')).toContainText('Invalid JSON')
 
-  test('status bar is present', async ({ page }) => {
-    await page.goto('/')
+    // Input remains intact
+    await expect(inputEditor).toHaveValue('{\n  "broken": JSON\n')
 
-    const statusBar = page.locator('#status-bar')
-    await expect(statusBar).toBeVisible()
+    // 6. Click Clear -> resets editor and output
+    await page.getByRole('button', { name: 'Clear JSON' }).click()
+    await expect(inputEditor).toHaveValue('')
+    await expect(page.getByText('Format JSON to see the result.')).toBeVisible()
   })
 })

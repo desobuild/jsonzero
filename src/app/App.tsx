@@ -1,44 +1,77 @@
-import { useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Header } from '@/components/shared/Header'
 import { PrivacyIndicator } from '@/components/shared/PrivacyIndicator'
 import { Toolbar } from '@/components/shared/Toolbar'
 import { StatusBar } from '@/components/shared/StatusBar'
+import { Toast } from '@/components/ui/toast'
+import { Workbench, useFormatter } from '@/features/formatter'
 
 export function App() {
-  const [activeTool, setActiveTool] = useState<string>('format')
+  const formatter = useFormatter()
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
+
+  // Keyboard shortcut: Ctrl + Shift + F (or Cmd + Shift + F) for Format
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.shiftKey &&
+        (e.key === 'F' || e.key === 'f')
+      ) {
+        e.preventDefault()
+        formatter.format()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [formatter])
+
+  const handleFutureToolSelect = useCallback((toolName: string) => {
+    setToastMessage(`${toolName} feature is coming in a future phase.`)
+  }, [])
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
+      {/* Header */}
       <Header />
-      <Toolbar activeTool={activeTool} onToolSelect={setActiveTool} />
 
-      {/* Main workbench area */}
-      <main className="flex flex-1 flex-col">
-        {/* Privacy indicator */}
-        <PrivacyIndicator />
+      {/* Privacy guarantee banner */}
+      <PrivacyIndicator />
 
-        {/* Workbench placeholder — Phase 1 will add the editor here */}
-        <div className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-2xl font-bold text-accent">
-                {'{ }'}
-              </span>
-              <span className="text-2xl font-bold text-text-primary">
-                JSONZero
-              </span>
-            </div>
-            <p className="text-sm text-text-muted">
-              Paste or drop your JSON to get started.
-            </p>
-            <p className="text-xs text-text-dim">
-              Phase 1 will add the full editor and formatter.
-            </p>
-          </div>
-        </div>
+      {/* Primary workbench toolbar */}
+      <Toolbar
+        onFormat={formatter.format}
+        onMinify={formatter.minify}
+        onValidate={formatter.validate}
+        indent={formatter.indent}
+        onIndentChange={formatter.setIndent}
+        onFutureToolSelect={handleFutureToolSelect}
+      />
+
+      {/* Dual-Pane Workbench Editor Area */}
+      <main className="flex flex-1 flex-col overflow-hidden">
+        <Workbench formatter={formatter} />
       </main>
 
-      <StatusBar />
+      {/* Live Status Bar */}
+      <StatusBar
+        validationState={formatter.validationState}
+        lineCount={formatter.inputStats.lineCount}
+        keyCount={formatter.inputStats.keyCount}
+        byteCount={formatter.inputStats.byteCount}
+        processingTimeMs={formatter.processingTimeMs}
+        lastOperation={formatter.lastOperation}
+      />
+
+      {/* Future Tool Toast */}
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          type="info"
+          onClose={() => setToastMessage(null)}
+        />
+      )}
     </div>
   )
 }

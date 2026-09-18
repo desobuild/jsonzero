@@ -27,6 +27,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "deploy": "npm run build && wrangler deploy",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -50,9 +51,9 @@
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "@playwright/test": "^1.52.0",
+    "@tailwindcss/vite": "^4.1.10",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
-    "@tailwindcss/vite": "^4.1.10",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
@@ -66,7 +67,8 @@
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.33.1",
     "vite": "^8.3.0",
-    "vitest": "^3.2.3"
+    "vitest": "^3.2.3",
+    "wrangler": "4.134.0"
   },
   "allowScripts": {
     "esbuild@0.28.2": true

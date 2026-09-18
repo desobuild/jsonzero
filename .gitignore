@@ -18,6 +18,7 @@ coverage
 *.tsbuildinfo
 playwright-report
 test-results
+.wrangler
 
 # Editor directories and files
 .vscode/*

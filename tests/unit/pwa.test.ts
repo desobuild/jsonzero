@@ -74,6 +74,71 @@ describe('PWA Manifest & Configuration', () => {
     expect(sw).toContain('CACHE_NAME')
     expect(sw).toContain('PRECACHE_ASSETS')
   })
+
+  it('service worker uses network-first navigation with offline fallback', () => {
+    const swPath = path.resolve(process.cwd(), 'public/sw.js')
+    const sw = fs.readFileSync(swPath, 'utf-8')
+
+    // Verifies navigation request detection
+    expect(sw).toContain("event.request.mode === 'navigate'")
+    // Verifies network-first fetch
+    expect(sw).toContain('fetch(event.request)')
+    // Verifies offline fallback to cached app shell
+    expect(sw).toContain("caches.match('/')")
+    // Verifies sanitization of redirected responses to prevent ERR_FAILED
+    expect(sw).toContain('toCleanResponse')
+    expect(sw).toContain('redirected')
+  })
+
+  it('service worker never passes unresolved or undefined responses to respondWith', () => {
+    const swPath = path.resolve(process.cwd(), 'public/sw.js')
+    const sw = fs.readFileSync(swPath, 'utf-8')
+
+    // Navigation offline fallback provides valid 503 response if cache empty
+    expect(sw).toContain("new Response('Offline',")
+    // Static asset offline fallback provides valid 404 response if asset not found
+    expect(sw).toContain('status: 404')
+  })
+
+  it('toCleanResponse helper sanitizes redirected responses correctly', () => {
+    // Replicate the toCleanResponse logic to verify it strips redirected flag
+    function toCleanResponse(res: Response): Response {
+      if (!res || !res.redirected) {
+        return res
+      }
+      return new Response(res.body, {
+        status: res.status,
+        statusText: res.statusText,
+        headers: res.headers,
+      })
+    }
+
+    const standardResponse = new Response('OK', { status: 200 })
+    expect(toCleanResponse(standardResponse).redirected).toBe(false)
+
+    // A mock redirected response
+    const mockRedirected = {
+      redirected: true,
+      body: 'HTML Content',
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'Content-Type': 'text/html' }),
+    } as unknown as Response
+
+    const cleaned = toCleanResponse(mockRedirected)
+    expect(cleaned.redirected).toBe(false)
+    expect(cleaned.status).toBe(200)
+  })
+
+  it('precache asset generator in vite.config.ts excludes /index.html to prevent 307 redirect loops', () => {
+    const viteConfigPath = path.resolve(process.cwd(), 'vite.config.ts')
+    const configContent = fs.readFileSync(viteConfigPath, 'utf-8')
+
+    // Excludes index.html so Cloudflare SPA 307 redirect is never stored in cache
+    expect(configContent).toContain("file !== 'index.html'")
+    // Maintains root '/' as canonical document
+    expect(configContent).toContain("'/'")
+  })
 })
 
 describe('PWA Service Module', () => {

@@ -300,4 +300,82 @@ test.describe('JSONZero PWA & Offline Functionality', () => {
     // Assert strictly zero external requests
     expect(networkRequests).toEqual([])
   })
+
+  test('16. Production navigation regression: repeated document navigation under active Service Worker control never fails', async ({
+    page,
+  }) => {
+    await waitForServiceWorkerActive(page)
+
+    // Verify Service Worker is actively controlling the page
+    const isControlled = await page.evaluate(
+      () => navigator.serviceWorker.controller !== null
+    )
+    expect(isControlled).toBe(true)
+
+    // Repeat fresh navigations to '/' multiple times
+    for (let i = 0; i < 5; i++) {
+      const response = await page.goto('/')
+      expect(response).not.toBeNull()
+      expect(response?.status()).toBe(200)
+      await expect(page.locator('#header')).toBeVisible()
+      await expect(page.locator('#json-input-editor')).toBeVisible()
+    }
+  })
+
+  test('17. Production navigation regression: navigations with query parameters succeed under active Service Worker', async ({
+    page,
+  }) => {
+    await waitForServiceWorkerActive(page)
+
+    const isControlled = await page.evaluate(
+      () => navigator.serviceWorker.controller !== null
+    )
+    expect(isControlled).toBe(true)
+
+    // Navigation with query string ?test=1 (the production reproduction case)
+    const response1 = await page.goto('/?test=1')
+    expect(response1).not.toBeNull()
+    expect(response1?.status()).toBe(200)
+    await expect(page.locator('#header')).toBeVisible()
+    await expect(page.locator('#json-input-editor')).toBeVisible()
+
+    // Additional query strings
+    const response2 = await page.goto('/?filter=sample&view=raw')
+    expect(response2).not.toBeNull()
+    expect(response2?.status()).toBe(200)
+    await expect(page.locator('#header')).toBeVisible()
+    await expect(page.locator('#json-input-editor')).toBeVisible()
+
+    // Reload with query string
+    await page.reload()
+    await expect(page.locator('#header')).toBeVisible()
+    await expect(page.locator('#json-input-editor')).toBeVisible()
+  })
+
+  test('18. Offline navigation with query parameters falls back cleanly to app shell', async ({
+    context,
+    page,
+  }) => {
+    await waitForServiceWorkerActive(page)
+
+    await context.setOffline(true)
+
+    // Navigate to a URL with query string while offline
+    const response = await page.goto('/?offline_mode=1')
+    expect(response).not.toBeNull()
+    expect(response?.status()).toBe(200)
+
+    await expect(page.locator('#header')).toBeVisible()
+    await expect(page.locator('#json-input-editor')).toBeVisible()
+    await expect(page.locator('#network-status')).toContainText('Offline')
+
+    // Formatting continues to function offline on query-string URL
+    const inputEditor = page.locator('#json-input-editor')
+    const outputEditor = page.locator('#json-output-editor')
+    await inputEditor.fill('{"queryOffline":true}')
+    await page.getByRole('button', { name: 'Format JSON' }).click()
+    await expect(outputEditor).toHaveValue(/{\n\s+"queryOffline": true\n}/)
+
+    await context.setOffline(false)
+  })
 })

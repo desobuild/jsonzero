@@ -10,10 +10,26 @@
 const CACHE_NAME = 'jsonzero-dev'
 const PRECACHE_ASSETS = [
   '/',
-  '/index.html',
   '/favicon.svg',
   '/manifest.webmanifest',
 ]
+
+/**
+ * Safely clone a response ensuring 'redirected' is false.
+ * In WHATWG Fetch & Service Worker specifications, navigation requests
+ * have redirect mode 'manual'. If respondWith() receives a response
+ * with redirected === true, the browser aborts navigation with net::ERR_FAILED.
+ */
+function toCleanResponse(response) {
+  if (!response || !response.redirected) {
+    return response
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  })
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -28,6 +44,16 @@ self.addEventListener('install', (event) => {
             err
           )
           await Promise.allSettled(PRECACHE_ASSETS.map((url) => cache.add(url)))
+        }
+        // Mirror '/' into '/index.html' in cache without issuing a separate network request
+        // that could follow a 307 redirect on Cloudflare SPA deployment
+        try {
+          const rootResponse = await cache.match('/')
+          if (rootResponse) {
+            await cache.put('/index.html', toCleanResponse(rootResponse.clone()))
+          }
+        } catch {
+          // Non-critical fallback
         }
       })
       .then(() => self.skipWaiting())
@@ -63,21 +89,47 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // App Shell navigation (HTML documents)
+  // App Shell navigation (HTML documents): Network-First with offline cache fallback
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      caches
-        .match('/index.html')
-        .then((cached) => cached || caches.match('/'))
-        .then((cached) => {
-          if (cached) return cached
-          return fetch(event.request).catch(() => caches.match('/index.html'))
+      fetch(event.request)
+        .then((networkResponse) => {
+          // If valid 200 response, update the cached app shell at '/'
+          if (
+            networkResponse &&
+            networkResponse.status === 200 &&
+            networkResponse.type === 'basic'
+          ) {
+            const clone = networkResponse.clone()
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => {
+                cache.put('/', clone)
+              })
+              .catch(() => {})
+          }
+          return networkResponse
+        })
+        .catch(async () => {
+          // Network failed (offline) — serve cached app shell
+          const cached =
+            (await caches.match('/')) ||
+            (await caches.match('/index.html')) ||
+            (await caches.match(url.pathname, { ignoreSearch: true }))
+          if (cached) {
+            return toCleanResponse(cached)
+          }
+          return new Response('Offline', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain' },
+          })
         })
     )
     return
   }
 
-  // Static assets (JS, CSS, Workers, Fonts, Icons)
+  // Static assets (JS, CSS, Workers, Fonts, Icons): Cache-First with network fallback
   event.respondWith(
     caches
       .match(event.request, { ignoreSearch: true })
@@ -97,10 +149,18 @@ self.addEventListener('fetch', (event) => {
             caches
               .open(CACHE_NAME)
               .then((cache) => cache.put(event.request, clone))
+              .catch(() => {})
           }
           return response
         })
       })
-      .catch(() => caches.match(url.pathname, { ignoreSearch: true }))
+      .catch(async () => {
+        const fallback = await caches.match(url.pathname, { ignoreSearch: true })
+        if (fallback) return fallback
+        return new Response(null, {
+          status: 404,
+          statusText: 'Not Found',
+        })
+      })
   )
 })

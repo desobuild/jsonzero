@@ -15,7 +15,6 @@ function jsonzeroPwaPlugin(): Plugin {
 
       const staticFiles = [
         '/',
-        '/index.html',
         '/manifest.webmanifest',
         '/favicon.svg',
         '/icon-192.png',
@@ -27,7 +26,12 @@ function jsonzeroPwaPlugin(): Plugin {
         new Set([
           ...staticFiles,
           ...emittedFiles
-            .filter((file) => !file.endsWith('.map') && file !== 'sw.js')
+            .filter(
+              (file) =>
+                !file.endsWith('.map') &&
+                file !== 'sw.js' &&
+                file !== 'index.html'
+            )
             .map((file) => (file.startsWith('/') ? file : `/${file}`)),
         ])
       )

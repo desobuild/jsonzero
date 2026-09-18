@@ -1,0 +1,100 @@
+name: Bug Report
+description: Report an issue or unexpected behavior in JSONZero
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Privacy Warning
+        > **DO NOT INCLUDE SECRETS, CREDENTIALS, TOKENS, PERSONAL DATA, OR PRIVATE JSON IN ISSUE REPORTS.**
+        > All issue reports are publicly visible on GitHub. Use anonymized or synthetic sample payloads if providing a reproduction case.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A concise description of the bug.
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Step-by-step instructions to reproduce the issue.
+      placeholder: |
+        1. Open JSONZero (or navigate to ...)
+        2. Enter synthetic/anonymized JSON: `{"key": "value"}`
+        3. Click '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: What should have happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: What occurred instead?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: json-size
+    attributes:
+      label: JSON Size / Payload Category
+      description: What was the approximate size or structure of the JSON payload?
+      options:
+        - "Small (< 100 KB / < 1,000 lines)"
+        - "Medium (100 KB – 1 MB / 1,000 – 10,000 lines)"
+        - "Large (> 1 MB / > 10,000 lines)"
+        - "N/A or Not Payload-Specific"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: offline
+    attributes:
+      label: Offline Reproduction
+      description: Does this issue reproduce when offline (Service Worker active)?
+      options:
+        - "Yes (reproduces offline)"
+        - "No (only happens online)"
+        - "Untested / Not Applicable"
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & Version
+      placeholder: e.g. Chrome 124, Firefox 125, Safari 17.4
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      placeholder: e.g. macOS 14.4, Windows 11, Ubuntu 24.04, iOS 17
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context, Logs, or Screenshots
+      description: Add any console error logs or non-sensitive screenshots. Remember: never include private JSON data or credentials.
+    validations:
+      required: false

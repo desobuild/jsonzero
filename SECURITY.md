@@ -1,39 +1,58 @@
 # Security Policy
 
-## Design Principles
+## Client-Side Security & Privacy Architecture
 
-JSONZero is designed for **local JSON processing**. All core JSON operations happen entirely in the browser. No JSON data is transmitted to any server for normal functionality.
+JSONZero is designed exclusively for **local in-browser JSON processing**:
+- All core JSON operations (formatting, inspection, diffing, transformation, conversion, testing, and worker operations) occur entirely within your browser runtime.
+- **Zero JSON data** is ever transmitted to any backend, server, CDN, or third-party service.
+- There are no user accounts, no analytics tracking, and no telemetry services.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in JSONZero, please report it responsibly.
+If you identify a security vulnerability in JSONZero, please report it responsibly.
 
-**Do not** publicly disclose the vulnerability in a GitHub Issue before it has been addressed.
+**Do not** publicly disclose security vulnerabilities in public GitHub issues, discussions, or pull requests before they have been investigated and resolved.
 
 ### How to Report
 
-1. Open a **private security advisory** via GitHub's Security tab on this repository.
-2. Provide a clear description of the vulnerability.
-3. Include steps to reproduce the issue if possible.
-4. Allow reasonable time for the issue to be addressed before public disclosure.
+1. Navigate to the [GitHub Security Advisories](https://github.com/desobuild/jsonzero/security/advisories/new) page for this repository.
+2. Submit a private advisory detailing the vulnerability.
+3. If GitHub Advisories are not accessible, contact the repository maintainers through their verified GitHub profiles. **Do not fabricate or send unverified email addresses.**
 
-### What Qualifies
+### What Information to Include
 
-- XSS vulnerabilities in JSON rendering
-- Data exfiltration through dependencies
-- Privacy violations (unintended network requests)
-- Supply chain attacks via dependencies
+To help triage and resolve the issue quickly, please provide:
+- A clear description of the vulnerability and its potential impact.
+- Step-by-step reproduction instructions.
+- A **synthetic or sanitized** minimal reproduction payload.
+- **Do NOT include real secrets, private API keys, credentials, tokens, personal data, or confidential JSON in your report.**
+- Browser name, version, and operating system.
 
-### What Does Not Qualify
+### Scope
 
-- Issues requiring physical access to the user's machine
-- Attacks against the hosting infrastructure (Cloudflare)
-- Social engineering attacks
+#### In Scope
+- Cross-Site Scripting (XSS) or DOM injection through malicious JSON parsing, inspection tree, or converter outputs.
+- Unintended external network requests or data leakage.
+- Service worker cache poisoning or offline vulnerability bypasses.
+- Supply chain vulnerabilities in third-party client dependencies.
+
+#### Out of Scope
+- Attacks requiring physical device access or compromised local browser environments.
+- Denial of Service caused by pasting arbitrarily large documents into client memory (handled via graceful error boundaries and workers).
+- Attacks against third-party hosting infrastructure (e.g., Cloudflare Pages).
+- Social engineering attacks.
 
 ## Supported Versions
 
-Only the latest released version receives security updates.
+Only the latest release receives security patches.
+
+| Version | Supported          |
+| ------- | ------------------ |
+| 0.1.x   | :white_check_mark: |
+| < 0.1.0 | :x:                |
 
 ## Response Timeline
 
-We aim to acknowledge security reports within **48 hours** and provide a fix or mitigation plan within **7 days** for critical issues.
+We aim to:
+- Acknowledge receipt within **48 hours**.
+- Provide a triage status and mitigation plan within **7 days** for critical issues.

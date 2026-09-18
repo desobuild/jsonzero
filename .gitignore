@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.*
+!.env.example
+coverage
+*.tsbuildinfo
 playwright-report
 test-results
 
@@ -24,3 +29,4 @@ test-results
 *.njsproj
 *.sln
 *.sw?
+

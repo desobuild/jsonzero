@@ -2,216 +2,211 @@
 
 **JSON. Zero clutter.**
 
-A privacy-first, client-side JSON developer workbench. Format, validate, diff, transform, and convert JSON — entirely in your browser.
+Privacy-first JSON developer workbench.
+
+Format, inspect, compare, transform, convert, and test JSON — entirely in your browser with zero network requests and zero server uploads.
+
+---
 
 ## Philosophy
 
-- **No ads** — ever
-- **No accounts** — no sign-up required
-- **No selling data** — your data stays yours
-- **No JSON uploads** — all processing happens locally
-- **No unnecessary backend** — 100% client-side
-- **Open source** — MIT licensed
-- **Free core tool** — developer-first UX
+JSONZero is built for developers who care about data confidentiality, tool responsiveness, and distraction-free workflows:
 
-## Status
+- **No ads** — No promotional banners or sponsored clutter.
+- **No accounts** — No sign-up, login, or email capture required.
+- **No selling data** — Your data never leaves your device.
+- **No JSON harvesting** — Zero backend servers, zero database logs.
+- **Local/browser processing** — 100% in-browser execution in client memory.
+- **Open source** — Fully transparent code under the [MIT License](./LICENSE).
+- **Free core tool** — High-performance developer workbench built for everyday productivity.
 
-> **Phase 10 — Quality, Accessibility & Privacy Audit** complete.
->
-> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, Developer & Testing Tools, Web Worker processing, bundle code splitting, offline execution, and PWA installation are fully audited and hardened.
+---
 
-### Quality, Accessibility & Privacy Audit (Phase 10)
+## Privacy Architecture
 
-JSONZero underwent an end-to-end quality audit across accessibility, keyboard usability, determinism, privacy, security, and performance.
+> "No ads. No accounts. No selling data."
+> 
+> **"Your JSON stays in your browser."**
 
-- **Accessibility**: Standard ARIA semantics across toolbars (`role="toolbar"`, `aria-pressed`), mobile tab navigation (`role="tablist"`, `role="tab"`), search disclosure (`aria-expanded`), live regions (`role="status"`, `aria-live="polite"`), and keyboard activation (`Enter`/`Space`) for interactive cells.
-- **Visual & Contrast**: WCAG AAA/AA compliant color contrast across light and dark themes with `:focus-visible` keyboard focus indicators.
-- **Reduced Motion**: Full support for `prefers-reduced-motion: reduce` disabling non-essential transitions and animations.
-- **Zero-Network Guarantee**: 0 external API calls, 0 analytics/telemetry trackers, 0 third-party CDN scripts or fonts. User JSON is never stored in persistent browser storage (`localStorage`, `sessionStorage`, or `indexedDB`).
-- **Browser Compatibility**: Fully tested across Chromium, Gecko (Firefox), and WebKit (Safari). Note: iOS Safari requires manual installation via the Share sheet due to lack of `beforeinstallprompt` support; Firefox Private Browsing disables service worker caching by engine policy.
-- **Quality Audit Documentation**: See [docs/quality-audit.md](./docs/quality-audit.md) for full baseline comparisons, metrics, and security reviews.
+### How Data Moves
 
-### Offline & PWA (Phase 9)
+```
+User JSON
+  │
+  ▼
+Browser Memory (RAM)
+  │
+  ▼
+JSONZero Processing (Synchronous Pure Utilities or Native Web Worker)
+  │
+  ▼
+Output Result (Rendered on screen)
+```
 
-JSONZero can be installed as a PWA and continues to process JSON locally when offline after the application has been cached.
+- **Zero Server Uploads**: No user JSON is ever transmitted across the network to any server.
+- **Zero Telemetry / Analytics**: No tracking SDKs, no behavioral cookies, no error reporting beacons.
+- **In-Memory Only**: User JSON is never stored in persistent browser storage (`localStorage`, `sessionStorage`, or `indexedDB`). Closing the tab instantly flushes your data.
+- **Theme Storage**: Only your chosen theme preference (`light` or `dark`) is stored locally in `localStorage`.
+- **Service Worker Isolation**: The Service Worker precaches static application assets (`.js`, `.css`, fonts, icons) so the app runs offline. It **never** caches user JSON.
 
-- **Offline-First**: Format, inspect, compare, convert, transform, and test JSON completely without an internet connection.
-- **Strict Privacy**: Application assets are cached locally by the service worker; user JSON is never cached or transmitted.
-- **Installable Desktop/Mobile App**: Uses standard Web App Manifest (`manifest.webmanifest`) and responsive layouts with zero third-party dependencies.
-- **Offline Web Workers**: Native Web Worker offloading for large JSON documents functions seamlessly offline.
-- **PWA Documentation**: See [docs/pwa.md](./docs/pwa.md) for caching architecture, service worker lifecycle, and browser support.
+For our full privacy specification, see [docs/privacy.md](./docs/privacy.md).
 
-### Performance & Scalability (Phase 8)
+---
 
-- **30.3% Initial Bundle Reduction**: Initial JS bundle reduced from ~595 kB to ~415 kB via dynamic route-level code splitting (`React.lazy` and `Suspense`), deferring heavy workbenches until requested.
-- **Dedicated Web Worker Offloading**: CPU-intensive parsing, formatting, minification, diffing, and transformations on documents >= 100 KB run off the main thread in native Web Workers, keeping the UI responsive.
-- **Instant Small-Document Processing**: Payloads < 100 KB process synchronously on the main thread, avoiding thread serialization overhead.
-- **Worker Cancellation & Error Recovery**: Long operations can be cancelled at any time with worker termination and fresh instance recycling; error boundaries prevent application crashes.
-- **High-Performance Editor Mode**: Documents exceeding 150 KB or 2,500 lines bypass expensive full-DOM syntax highlighting for instantaneous typing and scrolling, paired with windowed line number rendering.
-- **Tree View & Table Windowing**: Large arrays and tables are rendered with windowed pagination (50 items/page) to prevent DOM node explosions, while preserving complete, un-truncated TSV and CSV exports.
-- **Performance Documentation**: See [docs/performance.md](./docs/performance.md) for full benchmarks, worker protocol, and architecture details.
+## Feature Overview
 
+JSONZero provides six dedicated workbenches accessible from a unified toolbar:
 
-### Features
+### FORMAT
+- **Format**: Pretty-print JSON with configurable indentation (2 spaces, 4 spaces, or tabs).
+- **Minify**: Strip all whitespace and compact tokens for transport payloads.
+- **Validate**: Instant syntax validation with line/character indicators and actionable error diagnostics.
 
-- **Format / Minify / Validate**: Indentation (2 spaces, 4 spaces, tabs), fast parsing, syntax error indicators.
-- **Editor Search & Replace**: Case-sensitive, whole-word toggles, match navigation, replace current / all.
-- **Tree View Inspector**:
-  - Interactive recursive hierarchy for objects and arrays.
-  - Expand/collapse individual nodes, Expand All, Collapse All.
-  - Distinct syntax styling for strings, numbers, booleans, and null.
-  - Quick actions per node: Copy Key, Copy Value, Copy JSON Path.
-  - In-tree local search with match highlighting, match count, and ancestor auto-expansion.
-- **JSONPath Querying (Supported Subset)**:
-  - Supports: `$` (root), `.property`, `["property"]`, `[0]` (array indexing), `[*]` (wildcards), and basic filter expressions `[?(@.property == value)]` or comparisons `[?(@.count > 10)]`.
-  - Itemized results with individual path/value copying and bulk JSON copy.
-- **Structure Statistics**:
-  - Deterministic metrics: Root Type, Max Depth, Total Nodes, Total Primitives, and counts for Objects, Arrays, Keys, Strings, Numbers, Booleans, and Nulls.
-- **Structural JSON Compare / Diff**:
-  - Pure client-side recursive structural comparison between two JSON documents.
-  - **Object key ordering invariance**: Objects are compared by key regardless of property order.
-  - **Array order sensitivity**: Arrays are compared index-by-index in order.
-  - **Type transition detection**: Changes of value type (e.g. `1` → `"1"`, `[]` → `{}`) are accurately classified as `changed`.
-  - **Deterministic change summary**: Counts added, removed, changed, and total differences.
-  - **Precise JSONPaths**: Unambiguous JSONPath notation with bracket formatting for special characters.
-  - **Side-by-side & mobile responsive**: Dual editors on desktop, intuitive tabbed switcher on mobile.
-  - **Independent controls**: Independent formatting, clearing, input swapping, and sample loading.
-- **JSON Transform Tools**:
-  - **Sort Keys**: Alphabetical object-key sorting in lexicographic ascending order. Shallow sort keeps nested structures in original order.
-  - **Recursive Sort**: Recursively sorts keys across all nested objects. Strictly preserves array element order, while sorting objects within arrays.
-  - **Flatten**: Flattens nested JSON into single-depth key-value representation.
-    - *Path Notation*: Nested object properties use dot notation (`user.name`), and arrays use bracket indices (`users[0].name`).
-    - *Delimiter Escaping*: Special characters in object keys (`.`, `[`, `]`, `\`) are escaped (`\.`, `\[`, `\]`, `\\`) to ensure unambiguous representation.
-    - *Empty Containers*: Empty objects `{}` and arrays `[]` are preserved as leaf values.
-  - **Unflatten**: Reconstructs nested structure from flattened key paths.
-    - *Collision Protection*: Detects and prevents collisions (e.g., when a path is both a primitive and an object, or conflicting array vs object types). Halts safely with actionable error diagnostics without mutating input.
-  - **Escape JSON**: Compacts and serializes JSON as an escaped JSON string literal (e.g., `"{\"name\":\"Alice\"}"`) for embedding in code or configuration.
-  - **Unescape JSON**: Unescapes both quoted and unquoted escaped JSON strings, validating JSON syntax before formatting.
-  - **Escaped JSON Detection**: Automatically recognizes escaped JSON payloads and provides a quick `Unescape & Format` action.
-  - **Safe Non-Destructive Workflow**: Dedicated preview pane ensures input is never silently overwritten. Users explicitly inspect results and choose **Apply**, **Copy Result**, or **Reset**.
-- **JSON Conversion Tools (Phase 6)**:
-  - **JSON → Table**:
-    - Interactive tabular representation. Primary input is `Array<Object>`.
-    - Columns represent the union of all keys across objects, preserving order of first appearance without discarding fields.
-    - Nested values (objects and arrays) are formatted as compact readable JSON strings (`{"city":"Belagavi"}`), keeping cells clean while preserving raw underlying values.
-    - Non-array object roots are presented as Key-Value tables; primitive roots are rendered as single-column value tables; empty structures are gracefully indicated.
-    - Interactive controls include single-click cell copying, row copying, whole table TSV copying, and horizontal scrolling for wide datasets.
-  - **JSON → CSV**:
-    - Converts JSON arrays to standard RFC 4180 CSV with configurable delimiters (comma `,`, tab `\t`, semicolon `;`) and optional header inclusion.
-    - Robust escaping: values containing delimiters, double quotes, or newlines are quoted, with embedded quotes escaped as `""`.
-    - Nested objects and arrays are serialized as compact JSON inside safely escaped CSV cells.
-  - **JSON → TypeScript**:
-    - Generates clean, deterministic TypeScript interfaces and types based on the observed JSON sample.
-    - Conservative type inference (`string`, `number`, `boolean`, `null`, arrays, nested objects).
-    - Deterministic PascalCase interface names derived from property names, with parent-prefix collision avoidance.
-    - Automatically quotes object keys that are not valid JavaScript identifiers (e.g. `"first-name": string;`).
-    - Handles mixed-type arrays with union types `(number | string | boolean)[]` and heterogeneous object arrays with optional property markers `?`.
-  - **JSON → Dart**:
-    - Generates dependency-free Dart model classes with constructor, factory `fromJson(Map<String, dynamic> json)`, and `Map<String, dynamic> toJson()`.
-    - Sanitizes property keys into valid camelCase field names while preserving original JSON keys during serialization.
-    - Distinguishes `int`, `double`, and `num`. Handles nullability (`String?`, `dynamic`) based on observed sample data.
-  - **JSON → JSON Schema**:
-    - Generates standard JSON Schema Draft 2020-12 (`https://json-schema.org/draft/2020-12/schema`).
-    - Infers primitive types, integer vs number distinctions, objects with `properties` and `required` arrays, and arrays with homogeneous `items` or heterogeneous `anyOf` unions.
-- **Developer & Testing Tools (Phase 7)**:
-  - **JSON Schema Validation**:
-    - Validates JSON data against a local JSON Schema Draft 2020-12 compatible subset with zero network requests.
-    - Supported keywords:
-      - Types: `object`, `array`, `string`, `number`, `integer`, `boolean`, `null` (single or union arrays).
-      - Object: `properties`, `required`, `additionalProperties` (boolean or schema), `minProperties`, `maxProperties`.
-      - Array: `items`, `minItems`, `maxItems`, `uniqueItems`.
-      - String: `minLength`, `maxLength`, `pattern`.
-      - Number: `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`.
-      - Composition: `anyOf`, `oneOf`, `allOf`.
-      - Boolean schemas: `true` / `false`.
-    - Limitations: `$ref` resolution and remote schemas are explicitly not supported in this offline browser subset.
-    - Actionable error diagnostics: Itemized error reporting with JSONPath, keyword, expected condition, actual value, and copyable report.
-  - **API Assertion Generator**:
-    - Deterministically generates TypeScript `expect(...)` assertions for REST/JSON API response verification.
-    - Configurable structure, types, values, array lengths, and sample limits.
-  - **Playwright Assertion Generator**:
-    - Generates Playwright API test snippets with response status verification (`expect(response.ok()).toBeTruthy()`) and JSON body assertions.
-  - **Generic Test Assertions**:
-    - Framework-agnostic test assertions (`ASSERT $.id EXISTS`, `ASSERT $.id TYPE number`, `ASSERT $.id EQUALS 42`).
-  - **Mock JSON Generator**:
-    - Deterministically generates mock data while preserving the schema and inferred types without hallucinating fake personal details.
-    - Configurable strategies for strings, numbers, booleans, and array sampling.
-  - **Expected vs Actual Workflow**:
-    - Dedicated workflow comparing expected API contracts against live responses.
-    - Reuses Phase 4 recursive structural diff engine to display change summaries (Added, Removed, Changed).
-  - **Diff → Assertions**:
-    - Generates targeted assertions enforcing the expected state for all detected response differences.
-- **Privacy & Security**:
-  - 100% client-side. Zero telemetry, zero analytics, zero server calls.
+### INSPECT
+- **Search & Replace**: In-editor text search with match counts, match navigation, case sensitivity, and whole-word matching.
+- **Tree View**: Interactive recursive hierarchy for objects and arrays with individual toggle, Expand All, Collapse All, syntax coloring, and quick path copying (`Copy Key`, `Copy Value`, `Copy JSONPath`).
+- **JSONPath Querying**: Evaluates queries against JSON data supporting root (`$`), dot notation (`.user.name`), bracket notation (`['user']['name']`), array indices (`[0]`), wildcards (`[*]`), and filter comparisons (`[?(@.age > 21)]`).
+- **Structure Statistics**: Deterministic metrics including root type, max depth, total nodes, total primitives, and itemized counts for objects, arrays, keys, strings, numbers, booleans, and nulls.
 
+### COMPARE
+- **Structural JSON Diff**: Recursive client-side comparison engine.
+- **Key Order Invariance**: Objects are compared by key regardless of serialization order.
+- **Array Sensitivity**: Arrays are compared index-by-index in sequence.
+- **Change Classification**: Accurate detection of added, removed, and changed nodes, including primitive type transitions (`1` → `"1"`).
+- **Side-by-Side & Mobile**: Dual-pane editors on desktop with tabbed view switching on mobile viewports.
 
-## Local Development
+### TRANSFORM
+- **Sort Keys**: Alphabetical key sorting in lexicographical order (shallow or recursive, preserving array element order).
+- **Flatten**: Flattens nested JSON into single-depth key-value representation using dot notation for objects and bracket notation for arrays with delimiter escaping.
+- **Unflatten**: Reconstructs nested JSON structures with strict collision detection and diagnostics.
+- **Escape JSON**: Compacts and serializes JSON as a safely escaped JSON string literal for embedding in code.
+- **Unescape JSON**: Safely parses escaped JSON string payloads back into structured JSON.
+- **Safe Non-Destructive Workflow**: Dedicated preview pane ensures input is never silently overwritten until you choose Apply.
+
+### CONVERT
+- **JSON → Table**: Tabular representation of object arrays displaying the union of all keys, compact string representations for nested objects, and cell/TSV export.
+- **JSON → CSV**: RFC 4180 compliant CSV generator with delimiter selection (comma `,`, tab `\t`, semicolon `;`) and quote escaping.
+- **JSON → TypeScript**: Generates deterministic TypeScript interfaces, type inference, union types for mixed arrays, and optional property markers (`?`).
+- **JSON → Dart**: Generates dependency-free Dart models with constructors, `fromJson(Map<String, dynamic> json)`, and `toJson()` serialization methods.
+- **JSON → JSON Schema**: Generates standard JSON Schema Draft 2020-12 specifications.
+
+### TEST
+- **Schema Validation**: Validates JSON data against Draft 2020-12 schemas entirely offline without remote `$ref` requests.
+- **Generate Assertions**: Deterministic TypeScript `expect(...)` assertions for REST API response validation.
+- **Playwright Assertions**: Generates ready-to-run Playwright API test blocks.
+- **Generic Assertions**: Generates framework-agnostic JSONPath test assertions.
+- **Mock JSON**: Generates deterministic mock JSON payloads based on inferred schema types without hallucinations.
+- **Expected vs Actual**: Compares contract expectations against actual responses using the structural diff engine.
+- **Diff → Assertions**: Generates targeted assertions enforcing contract expectations for detected discrepancies.
+
+### Platform & Performance Capabilities
+- **Large JSON Web Worker**: CPU-intensive operations (formatting, minification, sorting, diffing) on documents >= 100 KB run off the main thread with full cancellation support.
+- **High-Performance Editor Mode**: Documents exceeding 150 KB or 2,500 lines bypass expensive full-DOM syntax highlighting to ensure fluid typing and scrolling.
+- **Offline PWA Support**: Installable as a Progressive Web App on desktop and mobile; all tools and workers continue running without internet access.
+- **Local File Open & Download**: Load local `.json` files directly into the workbench and download formatted or converted results locally.
+
+---
+
+## Quick Start
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 20+
-- npm 10+
+- [Node.js](https://nodejs.org/) 20.x or higher
+- `npm` 10.x or higher
 
-### Setup
+### Installation
 
 ```bash
 git clone https://github.com/desobuild/jsonzero.git
-cd JSONZero
+cd jsonzero
 npm install
 ```
 
-### Development
+### Development Server
 
 ```bash
 npm run dev
 ```
 
-### Build
+Open `http://localhost:5173` in your browser.
+
+### Production Build & Preview
 
 ```bash
 npm run build
 npm run preview
 ```
 
-### Testing
+Previews the optimized production build at `http://localhost:4173`.
+
+### Automated Tests
 
 ```bash
-npm run test          # Unit tests
-npm run test:watch    # Watch mode
-npm run test:e2e      # Playwright e2e tests
+npm run test          # Unit and component tests (Vitest)
+npm run test:watch    # Interactive watch mode (Vitest)
+npm run test:e2e      # End-to-end browser tests (Playwright)
 ```
 
-### Code Quality
+### Code Quality & Formatting
 
 ```bash
-npm run lint          # ESLint
-npm run format        # Prettier (write)
-npm run format:check  # Prettier (check)
-npm run typecheck     # TypeScript
+npm run lint          # ESLint code style and quality checks
+npm run typecheck     # TypeScript compiler type check (--noEmit)
+npm run format:check  # Check formatting with Prettier
+npm run format        # Automatically fix formatting with Prettier
 ```
 
-## Technology Stack
+---
 
-| Layer        | Technology                        |
-| ------------ | --------------------------------- |
-| Frontend     | React, TypeScript, Vite           |
-| Styling      | Tailwind CSS v4, shadcn/ui        |
-| Icons        | Lucide React                      |
-| Typography   | Geist Sans, Geist Mono            |
-| Testing      | Vitest, React Testing Library, Playwright |
-| Code Quality | ESLint, Prettier                  |
-| Hosting      | Cloudflare Pages                  |
+## Architecture & Technology Stack
 
-## Privacy
+| Layer | Technology |
+| ----- | ---------- |
+| **Framework** | [React 19](https://react.dev/), [TypeScript 6](https://www.typescriptlang.org/), [Vite 8](https://vite.dev/) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/) tokens |
+| **Typography** | Self-hosted [Geist Sans](https://vercel.com/font/sans) & [Geist Mono](https://vercel.com/font/mono) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+| **Testing** | [Vitest](https://vitest.dev/), [React Testing Library](https://testing-library.com/), [Playwright](https://playwright.dev/) |
+| **Offline / PWA** | Native Web Worker, Native Service Worker (`sw.js`), Web App Manifest |
+| **Hosting** | [Cloudflare Pages](https://pages.cloudflare.com/) (or any static HTTP host) |
 
-JSONZero is designed from the ground up with privacy as a core principle:
+For in-depth architectural diagrams and module boundaries, see [docs/architecture.md](./docs/architecture.md).
 
-- All JSON processing happens **locally in your browser**
-- **No data is sent** to any server for core functionality
-- **No analytics**, tracking, or telemetry SDKs
-- **No authentication** required
-- **No third-party data processing**
+---
+
+## Known Limitations
+
+- **Large Documents**: Documents larger than 150 KB or 2,500 lines switch to high-performance plain editor mode to prevent browser DOM rendering stalls.
+- **iOS Safari PWA Installation**: iOS Safari does not support programmatic `beforeinstallprompt`. Installation is performed manually via **Share > Add to Home Screen**.
+- **Firefox Private Browsing**: Firefox disables Service Worker caching and `Cache Storage` in Private Browsing mode by engine security policy. The application works normally online, but offline asset caching is unavailable in private tabs.
+- **Offline Schema Validation**: The schema validator implements an offline subset of JSON Schema Draft 2020-12. Remote `$ref` resolution over HTTP is deliberately omitted to preserve our zero-network guarantee.
+
+---
+
+## Documentation Index
+
+- [Architecture Guide](./docs/architecture.md) — Technical details of feature modules, Web Workers, and offline architecture.
+- [Privacy Model](./docs/privacy.md) — Exhaustive breakdown of local data flow, zero-network guarantees, and memory lifecycle.
+- [Deployment Guide](./docs/deployment.md) — Instructions for Cloudflare Pages, preview builds, and static hosts.
+- [Versioning & Release Strategy](./docs/versioning.md) — Semantic versioning and release lifecycle.
+- [Performance Benchmarks](./docs/performance.md) — Metrics, worker offloading benchmarks, and windowing details.
+- [Quality & Accessibility Audit](./docs/quality-audit.md) — ARIA semantics, WCAG contrast, and keyboard navigation audit.
+- [Changelog](./CHANGELOG.md) — History of all completed phases and releases.
+
+---
+
+## Contributing
+
+Contributions that align with our privacy-first philosophy are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on code style, branch naming, local test requirements, and contribution rules.
+
+---
+
+## Security
+
+Security reports are taken very seriously. Please review our [Security Policy](./SECURITY.md) to report vulnerabilities privately via GitHub Security Advisories. **Never include private JSON payloads or credentials in issue reports.**
+
+---
 
 ## License
 
-[MIT](./LICENSE)
+JSONZero is open-source software licensed under the [MIT License](./LICENSE).

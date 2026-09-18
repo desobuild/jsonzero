@@ -1,0 +1,46 @@
+name: Feature Request
+description: Suggest an enhancement or new capability for JSONZero
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Project Principles
+        JSONZero is a privacy-first, client-side developer workbench. All core JSON processing must happen locally in the browser with zero telemetry and zero server uploads.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Need
+      description: What problem are you trying to solve or what limitation are you encountering?
+      placeholder: A clear and concise description of the problem...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How should this feature work? Keep in mind that all JSON processing must execute locally in the client.
+      placeholder: A clear and concise description of what you want to happen...
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Who would benefit from this feature and in what workflow?
+      placeholder: Example developer workflow or use case...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: Any alternative approaches...
+    validations:
+      required: false

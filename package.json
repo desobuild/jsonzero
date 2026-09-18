@@ -5,6 +5,24 @@
   "type": "module",
   "description": "JSONZero — A privacy-first, client-side JSON developer workbench. JSON. Zero clutter.",
   "license": "MIT",
+  "homepage": "https://github.com/desobuild/jsonzero",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/desobuild/jsonzero.git"
+  },
+  "bugs": {
+    "url": "https://github.com/desobuild/jsonzero/issues"
+  },
+  "keywords": [
+    "json",
+    "json-formatter",
+    "json-validator",
+    "json-diff",
+    "developer-tools",
+    "offline-first",
+    "privacy-first",
+    "pwa"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

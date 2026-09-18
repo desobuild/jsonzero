@@ -160,8 +160,15 @@ export function Workbench({
       )}
 
       {/* Mobile Tab Switcher */}
-      <div className="flex border-b border-border bg-surface md:hidden">
+      <div
+        role="tablist"
+        aria-label="Input or Formatted view"
+        className="flex border-b border-border bg-surface md:hidden"
+      >
         <button
+          type="button"
+          role="tab"
+          aria-selected={activeMobileTab === 'input'}
           onClick={() => setActiveMobileTab('input')}
           className={cn(
             'flex-1 py-2 text-center text-xs font-medium transition-colors border-b-2',
@@ -178,6 +185,9 @@ export function Workbench({
           )}
         </button>
         <button
+          type="button"
+          role="tab"
+          aria-selected={activeMobileTab === 'output'}
           onClick={() => setActiveMobileTab('output')}
           className={cn(
             'flex-1 py-2 text-center text-xs font-medium transition-colors border-b-2',

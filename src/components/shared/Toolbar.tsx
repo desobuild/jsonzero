@@ -70,6 +70,8 @@ export function Toolbar({
   return (
     <div
       id="toolbar"
+      role="toolbar"
+      aria-label="Workbench actions"
       className="flex h-10 items-center justify-between border-b border-border bg-surface px-3 py-1"
     >
       {/* Primary and secondary actions */}
@@ -125,6 +127,7 @@ export function Toolbar({
         <Button
           id="toolbar-search"
           aria-label="Search"
+          aria-pressed={isSearchActive}
           variant="ghost"
           size="sm"
           onClick={onToggleSearch}
@@ -153,6 +156,7 @@ export function Toolbar({
         <Button
           id="toolbar-diff"
           aria-label="Compare / Diff"
+          aria-pressed={activeView === 'diff'}
           variant="ghost"
           size="sm"
           onClick={() =>
@@ -184,6 +188,7 @@ export function Toolbar({
         <Button
           id="toolbar-tree"
           aria-label="Tree View"
+          aria-pressed={activeView === 'tree'}
           variant="ghost"
           size="sm"
           onClick={() =>
@@ -213,6 +218,7 @@ export function Toolbar({
         <Button
           id="toolbar-transform"
           aria-label="Transform"
+          aria-pressed={activeView === 'transform'}
           variant="ghost"
           size="sm"
           onClick={() =>
@@ -244,6 +250,7 @@ export function Toolbar({
         <Button
           id="toolbar-convert"
           aria-label="Convert"
+          aria-pressed={activeView === 'convert'}
           variant="ghost"
           size="sm"
           onClick={() =>
@@ -275,6 +282,7 @@ export function Toolbar({
         <Button
           id="toolbar-testing"
           aria-label="Developer & Testing Tools"
+          aria-pressed={activeView === 'testing'}
           variant="ghost"
           size="sm"
           onClick={() =>

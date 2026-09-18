@@ -165,3 +165,21 @@ samp {
   background-color: var(--jz-accent);
   color: var(--jz-accent-foreground);
 }
+
+/* Accessibility: Global visible keyboard focus indicator */
+:focus-visible {
+  outline: 2px solid var(--jz-accent);
+  outline-offset: 1px;
+}
+
+/* Accessibility: Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

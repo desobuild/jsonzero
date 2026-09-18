@@ -113,9 +113,15 @@ export const TestingToolbar: React.FC<TestingToolbarProps> = ({
         </Button>
 
         {/* Mobile Tabs */}
-        <div className="flex rounded border border-border bg-surface-elevated p-0.5 md:hidden">
+        <div
+          role="tablist"
+          aria-label="Testing views"
+          className="flex rounded border border-border bg-surface-elevated p-0.5 md:hidden"
+        >
           <button
             type="button"
+            role="tab"
+            aria-selected={activeMobileTab === 'input'}
             data-testid="mobile-tab-input"
             onClick={() => onMobileTabChange('input')}
             className={cn(
@@ -134,6 +140,8 @@ export const TestingToolbar: React.FC<TestingToolbarProps> = ({
           {selectedTool === 'schema-validation' && (
             <button
               type="button"
+              role="tab"
+              aria-selected={activeMobileTab === 'schema'}
               data-testid="mobile-tab-schema"
               onClick={() => onMobileTabChange('schema')}
               className={cn(
@@ -151,6 +159,8 @@ export const TestingToolbar: React.FC<TestingToolbarProps> = ({
             selectedTool === 'diff-assertions') && (
             <button
               type="button"
+              role="tab"
+              aria-selected={activeMobileTab === 'actual'}
               data-testid="mobile-tab-actual"
               onClick={() => onMobileTabChange('actual')}
               className={cn(
@@ -166,6 +176,8 @@ export const TestingToolbar: React.FC<TestingToolbarProps> = ({
 
           <button
             type="button"
+            role="tab"
+            aria-selected={activeMobileTab === 'preview'}
             data-testid="mobile-tab-preview"
             onClick={() => onMobileTabChange('preview')}
             className={cn(

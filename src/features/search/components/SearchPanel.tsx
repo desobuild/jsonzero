@@ -116,6 +116,7 @@ export function SearchPanel({
         <button
           type="button"
           aria-label={isReplaceOpen ? 'Hide Replace' : 'Show Replace'}
+          aria-expanded={isReplaceOpen}
           onClick={onToggleReplace}
           title={
             isReplaceOpen ? 'Hide Replace (Ctrl+H)' : 'Show Replace (Ctrl+H)'
@@ -148,6 +149,8 @@ export function SearchPanel({
           {/* Match Count Indicator */}
           {hasQuery && (
             <span
+              role="status"
+              aria-live="polite"
               className={cn(
                 'ml-1 shrink-0 select-none font-mono text-3xs',
                 hasMatches

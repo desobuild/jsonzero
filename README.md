@@ -16,9 +16,20 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 9 — Offline & Progressive Web App (PWA)** complete.
+> **Phase 10 — Quality, Accessibility & Privacy Audit** complete.
 >
-> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, Developer & Testing Tools, Web Worker processing, bundle code splitting, offline execution, and PWA installation are active.
+> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, Developer & Testing Tools, Web Worker processing, bundle code splitting, offline execution, and PWA installation are fully audited and hardened.
+
+### Quality, Accessibility & Privacy Audit (Phase 10)
+
+JSONZero underwent an end-to-end quality audit across accessibility, keyboard usability, determinism, privacy, security, and performance.
+
+- **Accessibility**: Standard ARIA semantics across toolbars (`role="toolbar"`, `aria-pressed`), mobile tab navigation (`role="tablist"`, `role="tab"`), search disclosure (`aria-expanded`), live regions (`role="status"`, `aria-live="polite"`), and keyboard activation (`Enter`/`Space`) for interactive cells.
+- **Visual & Contrast**: WCAG AAA/AA compliant color contrast across light and dark themes with `:focus-visible` keyboard focus indicators.
+- **Reduced Motion**: Full support for `prefers-reduced-motion: reduce` disabling non-essential transitions and animations.
+- **Zero-Network Guarantee**: 0 external API calls, 0 analytics/telemetry trackers, 0 third-party CDN scripts or fonts. User JSON is never stored in persistent browser storage (`localStorage`, `sessionStorage`, or `indexedDB`).
+- **Browser Compatibility**: Fully tested across Chromium, Gecko (Firefox), and WebKit (Safari). Note: iOS Safari requires manual installation via the Share sheet due to lack of `beforeinstallprompt` support; Firefox Private Browsing disables service worker caching by engine policy.
+- **Quality Audit Documentation**: See [docs/quality-audit.md](./docs/quality-audit.md) for full baseline comparisons, metrics, and security reviews.
 
 ### Offline & PWA (Phase 9)
 

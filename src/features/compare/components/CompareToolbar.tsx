@@ -88,9 +88,15 @@ export function CompareToolbar({
       </div>
 
       {/* Mobile-only view switcher tabs */}
-      <div className="flex md:hidden items-center rounded-md border border-border bg-surface-elevated p-0.5">
+      <div
+        role="tablist"
+        aria-label="Compare views"
+        className="flex md:hidden items-center rounded-md border border-border bg-surface-elevated p-0.5"
+      >
         <button
           type="button"
+          role="tab"
+          aria-selected={activeMobileTab === 'jsonA'}
           id="mobile-tab-json-a"
           data-testid="mobile-tab-json-a"
           onClick={() => onMobileTabChange('jsonA')}
@@ -104,6 +110,8 @@ export function CompareToolbar({
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={activeMobileTab === 'jsonB'}
           id="mobile-tab-json-b"
           data-testid="mobile-tab-json-b"
           onClick={() => onMobileTabChange('jsonB')}
@@ -117,6 +125,8 @@ export function CompareToolbar({
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={activeMobileTab === 'diff'}
           id="mobile-tab-diff"
           data-testid="mobile-tab-diff"
           onClick={() => onMobileTabChange('diff')}

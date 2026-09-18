@@ -220,10 +220,17 @@ export const ConvertTable: React.FC<ConvertTableProps> = ({
                       <td
                         key={col.id}
                         data-testid={`table-cell-${rowIdx}-${col.id}`}
+                        tabIndex={0}
                         onClick={() => handleCopyCell(rowIdx, col.id, cellVal)}
-                        title="Click to copy cell value"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handleCopyCell(rowIdx, col.id, cellVal)
+                          }
+                        }}
+                        title="Click or press Enter to copy cell value"
                         className={cn(
-                          'cursor-pointer border-r border-border px-3 py-1.5 transition-colors max-w-xs truncate select-text',
+                          'cursor-pointer border-r border-border px-3 py-1.5 transition-colors max-w-xs truncate select-text focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-accent',
                           isMissing
                             ? 'text-text-muted font-normal'
                             : 'text-text-primary',

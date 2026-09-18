@@ -116,9 +116,15 @@ export const ConvertToolbar: React.FC<ConvertToolbarProps> = ({
         )}
 
         {/* Mobile Input / Output Tabs */}
-        <div className="flex rounded border border-border bg-surface-elevated p-0.5 md:hidden">
+        <div
+          role="tablist"
+          aria-label="Convert views"
+          className="flex rounded border border-border bg-surface-elevated p-0.5 md:hidden"
+        >
           <button
             type="button"
+            role="tab"
+            aria-selected={activeMobileTab === 'input'}
             data-testid="mobile-tab-input"
             onClick={() => onMobileTabChange('input')}
             className={cn(
@@ -132,6 +138,8 @@ export const ConvertToolbar: React.FC<ConvertToolbarProps> = ({
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeMobileTab === 'preview'}
             data-testid="mobile-tab-preview"
             onClick={() => onMobileTabChange('preview')}
             className={cn(

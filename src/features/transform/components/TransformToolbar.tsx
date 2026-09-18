@@ -117,9 +117,15 @@ export const TransformToolbar: React.FC<TransformToolbarProps> = ({
         </Button>
 
         {/* Mobile Input / Preview Tabs */}
-        <div className="flex rounded border border-border bg-surface-elevated p-0.5 md:hidden">
+        <div
+          role="tablist"
+          aria-label="Transform views"
+          className="flex rounded border border-border bg-surface-elevated p-0.5 md:hidden"
+        >
           <button
             type="button"
+            role="tab"
+            aria-selected={activeMobileTab === 'input'}
             data-testid="mobile-tab-input"
             onClick={() => onMobileTabChange('input')}
             className={cn(
@@ -133,6 +139,8 @@ export const TransformToolbar: React.FC<TransformToolbarProps> = ({
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeMobileTab === 'preview'}
             data-testid="mobile-tab-preview"
             onClick={() => onMobileTabChange('preview')}
             className={cn(

@@ -10,7 +10,7 @@ MAJOR.MINOR.PATCH
 
 ## 1. Current Lifecycle Stage
 
-- **Current Version**: `0.1.0`
+- **Current Version**: `1.0.0`
 - **Pre-1.0 Milestone**: JSONZero is in active feature development leading up to its official v1.0.0 production release.
 - Breaking changes or workbench restructuring during `0.x` will be incremented via **MINOR** versions (`0.2.0`, etc.).
 - The official **v1.0.0** release will mark the completion of the Final UI/UX Polish phase and public release readiness.

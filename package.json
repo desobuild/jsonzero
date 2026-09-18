@@ -1,7 +1,7 @@
 {
   "name": "jsonzero",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "JSONZero — A privacy-first, client-side JSON developer workbench. JSON. Zero clutter.",
   "license": "MIT",

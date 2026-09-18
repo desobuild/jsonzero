@@ -72,10 +72,10 @@ export function Toolbar({
       id="toolbar"
       role="toolbar"
       aria-label="Workbench actions"
-      className="flex h-11 sm:h-12 items-center justify-between border-b border-border bg-surface px-3 sm:px-4 py-1.5 overflow-x-auto scrollbar-none"
+      className="grid h-11 sm:h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-border bg-surface px-3 sm:px-4 py-1.5 overflow-hidden"
     >
       {/* Primary and secondary actions */}
-      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 overflow-x-auto pr-1">
         {/* Format Action (Primary) */}
         <Button
           id="toolbar-format"
@@ -85,11 +85,11 @@ export function Toolbar({
           onClick={() => {
             onFormat?.()
           }}
-          className="h-9 px-3.5 sm:px-4 gap-2 font-semibold text-accent-foreground shadow-sm hover:opacity-95 shrink-0"
+          className="h-9 px-3.5 sm:px-4 lg:min-w-[196px] gap-2 lg:gap-2.5 font-semibold text-accent-foreground shadow-sm hover:opacity-95 shrink-0"
         >
           <Braces className="h-4 w-4 shrink-0" />
           <span className="text-sm font-semibold">Format</span>
-          <kbd className="hidden lg:inline-flex items-center rounded bg-accent-foreground/20 px-1.5 py-0.5 text-xs font-mono font-semibold tracking-wide text-accent-foreground shrink-0">
+          <kbd className="hidden lg:inline-flex items-center rounded bg-accent-foreground/20 px-2 py-0.5 text-2xs font-mono font-semibold tracking-wide text-accent-foreground shrink-0 lg:ml-2">
             Ctrl+Shift+F
           </kbd>
         </Button>
@@ -295,13 +295,13 @@ export function Toolbar({
             <Button
               variant="outline"
               size="default"
-              className="h-9 gap-2 border-border bg-surface-elevated px-3 text-xs sm:text-sm text-text-secondary hover:text-text-primary shrink-0"
+              className="h-9 gap-2 sm:gap-2.5 border-border bg-surface-elevated px-3 sm:px-3.5 text-xs sm:text-sm text-text-secondary hover:text-text-primary shrink-0"
             >
               <span className="text-text-muted">Indent:</span>
               <span className="font-mono text-text-primary font-medium">
                 {currentIndentLabel}
               </span>
-              <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
+              <ChevronDown className="h-3.5 w-3.5 text-text-muted ml-0.5 shrink-0" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

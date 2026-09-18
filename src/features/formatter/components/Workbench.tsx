@@ -215,20 +215,29 @@ export function Workbench({
           )}
         >
           {/* Pane Header */}
-          <div className="flex h-10 shrink-0 items-center justify-between border-b border-border bg-surface px-3.5 sm:px-4 py-1.5">
-            <div className="flex items-center gap-2.5">
-              <span className="rounded bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-text-secondary uppercase tracking-wider">
+          <div className="grid grid-cols-2 lg:grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-surface px-3.5 sm:px-4 py-1.5 lg:py-0 lg:h-10 gap-y-1.5 lg:gap-y-0 gap-x-2">
+            {/* Center title (Row 1 on mobile/tablet, Column 2 on desktop) */}
+            <div className="col-span-2 lg:col-span-1 lg:col-start-2 justify-self-center flex items-center">
+              <span
+                data-testid="input-pane-title"
+                className="rounded bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-text-secondary uppercase tracking-wider select-none shrink-0"
+              >
                 Input JSON
               </span>
-              {inputStats.characterCount > 0 && (
-                <span className="hidden text-xs text-text-muted sm:inline">
+            </div>
+
+            {/* Left metadata (Row 2 Col 1 on mobile/tablet, Column 1 on desktop) */}
+            <div className="col-span-1 lg:col-span-1 lg:col-start-1 lg:row-start-1 justify-self-start flex items-center min-w-0">
+              {inputStats.characterCount > 0 ? (
+                <span className="text-xs text-text-muted truncate">
                   {inputStats.lineCount} lines ·{' '}
                   {formatBytes(inputStats.byteCount)}
                 </span>
-              )}
+              ) : null}
             </div>
 
-            <div className="flex items-center gap-1.5">
+            {/* Right actions (Row 2 Col 2 on mobile/tablet, Column 3 on desktop) */}
+            <div className="col-span-1 lg:col-span-1 lg:col-start-3 lg:row-start-1 justify-self-end flex items-center gap-1.5 shrink-0">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -244,7 +253,7 @@ export function Workbench({
                 onClick={() => setWordWrap((prev) => !prev)}
                 title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'}
                 className={cn(
-                  'h-7 gap-1.5 px-2.5 text-xs transition-colors',
+                  'h-7 gap-1.5 px-2 sm:px-2.5 text-xs transition-colors',
                   wordWrap
                     ? 'border border-accent/40 bg-accent/15 text-accent font-medium'
                     : 'text-text-secondary hover:text-text-primary'
@@ -256,9 +265,10 @@ export function Workbench({
               <Button
                 variant="ghost"
                 size="sm"
+                aria-label="Open JSON file from disk"
                 onClick={handleOpenFileClick}
                 title="Open JSON file from disk"
-                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary"
+                className="h-7 gap-1.5 px-2 sm:px-2.5 text-xs text-text-secondary hover:text-text-primary"
               >
                 <Upload className="h-3.5 w-3.5" />
                 <span>Open JSON</span>
@@ -270,7 +280,7 @@ export function Workbench({
                 onClick={clear}
                 disabled={!input && !output && !error}
                 title="Clear editor"
-                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary disabled:opacity-30"
+                className="h-7 gap-1.5 px-2 sm:px-2.5 text-xs text-text-secondary hover:text-text-primary disabled:opacity-30"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span>Clear</span>
@@ -344,22 +354,31 @@ export function Workbench({
           )}
         >
           {/* Pane Header */}
-          <div className="flex h-10 shrink-0 items-center justify-between border-b border-border bg-surface px-3.5 sm:px-4 py-1.5">
-            <div className="flex items-center gap-2.5">
-              <span className="rounded bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-text-secondary uppercase tracking-wider">
+          <div className="grid grid-cols-2 lg:grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-surface px-3.5 sm:px-4 py-1.5 lg:py-0 lg:h-10 gap-y-1.5 lg:gap-y-0 gap-x-2">
+            {/* Center title (Row 1 on mobile/tablet, Column 2 on desktop) */}
+            <div className="col-span-2 lg:col-span-1 lg:col-start-2 justify-self-center flex items-center">
+              <span
+                data-testid="formatted-pane-title"
+                className="rounded bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-text-secondary uppercase tracking-wider select-none shrink-0"
+              >
                 Formatted JSON
               </span>
-              {outputStats.characterCount > 0 && (
-                <span className="hidden text-xs text-text-muted sm:inline">
+            </div>
+
+            {/* Left metadata (Row 2 Col 1 on mobile/tablet, Column 1 on desktop) */}
+            <div className="col-span-1 lg:col-span-1 lg:col-start-1 lg:row-start-1 justify-self-start flex items-center min-w-0">
+              {outputStats.characterCount > 0 ? (
+                <span className="text-xs text-text-muted truncate">
                   {outputStats.lineCount} lines ·{' '}
                   {formatBytes(outputStats.byteCount)}
                   {outputStats.keyCount > 0 &&
                     ` · ${outputStats.keyCount} keys`}
                 </span>
-              )}
+              ) : null}
             </div>
 
-            <div className="flex items-center gap-1.5">
+            {/* Right actions (Row 2 Col 2 on mobile/tablet, Column 3 on desktop) */}
+            <div className="col-span-1 lg:col-span-1 lg:col-start-3 lg:row-start-1 justify-self-end flex items-center gap-1.5 shrink-0">
               <Button
                 variant={copied ? 'accent' : 'ghost'}
                 size="sm"
@@ -367,7 +386,7 @@ export function Workbench({
                 onClick={handleCopy}
                 disabled={!output}
                 title="Copy formatted JSON to clipboard"
-                className="h-7 gap-1.5 px-2.5 text-xs disabled:opacity-30"
+                className="h-7 gap-1.5 px-2 sm:px-2.5 text-xs disabled:opacity-30"
               >
                 {copied ? (
                   <>
@@ -388,7 +407,7 @@ export function Workbench({
                 onClick={handleDownload}
                 disabled={!output}
                 title="Download JSON locally"
-                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary disabled:opacity-30"
+                className="h-7 gap-1.5 px-2 sm:px-2.5 text-xs text-text-secondary hover:text-text-primary disabled:opacity-30"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>Download</span>

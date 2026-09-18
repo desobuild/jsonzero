@@ -166,40 +166,41 @@
 }
 
 /* ─── Base styles ─── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-html {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  html {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-body {
-  background-color: var(--jz-background);
-  color: var(--jz-text-primary);
-  min-height: 100dvh;
+  body {
+    background-color: var(--jz-background);
+    color: var(--jz-text-primary);
+    min-height: 100dvh;
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+  }
 }
 
 #root {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-}
-
-/* Code / monospace elements */
-code,
-pre,
-kbd,
-samp {
-  font-family: var(--font-mono);
 }
 
 /* Scrollbar styling (subtle, dev-tool aesthetic) */

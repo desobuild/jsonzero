@@ -59,11 +59,55 @@ test.describe('Final UI Spacing & Readability Visual Verification', () => {
         }
       }
 
-      // 5. Verify Editor Gutter Separation
+      // 5. Verify Indent dropdown control
+      const indentBtn = toolbar.getByRole('button', { name: /Indent:/i })
+      await expect(indentBtn).toBeVisible()
+
+      // 6. Verify Workspace Page Padding (Breathing room on left & right)
+      const workspaceBox = await toolbar.boundingBox()
+      expect(workspaceBox).not.toBeNull()
+      if (workspaceBox) {
+        expect(workspaceBox.x).toBeGreaterThanOrEqual(10)
+        expect(workspaceBox.x + workspaceBox.width).toBeLessThanOrEqual(
+          vp.width - 10
+        )
+      }
+
+      // 7. Verify Pane Headers Centering at Desktop/Tablet
+      if (vp.width >= 768) {
+        const inputHeaderTitle = page.getByTestId('input-pane-title')
+        const formattedHeaderTitle = page.getByTestId('formatted-pane-title')
+        await expect(inputHeaderTitle).toBeVisible()
+        await expect(formattedHeaderTitle).toBeVisible()
+
+        // Actions exist and do not collide
+        const clearBtn = page.getByRole('button', { name: 'Clear JSON' })
+        const openBtn = page.getByRole('button', {
+          name: 'Open JSON file from disk',
+        })
+        const copyBtn = page.getByRole('button', { name: 'Copy JSON' })
+        const downloadBtn = page.getByRole('button', { name: 'Download JSON' })
+
+        await expect(clearBtn).toBeVisible()
+        await expect(openBtn).toBeVisible()
+        await expect(copyBtn).toBeVisible()
+        await expect(downloadBtn).toBeVisible()
+
+        const clearBox = await clearBtn.boundingBox()
+        const formattedTitleBox = await formattedHeaderTitle.boundingBox()
+        if (clearBox && formattedTitleBox) {
+          // Clear is strictly to the left of formattedTitleBox (in left pane vs right pane)
+          expect(clearBox.x + clearBox.width).toBeLessThanOrEqual(
+            formattedTitleBox.x
+          )
+        }
+      }
+
+      // 8. Verify Editor Gutter Separation
       const editor = page.locator('#json-input-editor')
       await expect(editor).toBeVisible()
 
-      // 6. Verify Status Bar
+      // 9. Verify Status Bar
       const statusBar = page.locator('#status-bar')
       await expect(statusBar).toBeVisible()
       await expect(statusBar).toContainText('Ready')

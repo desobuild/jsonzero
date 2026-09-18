@@ -115,12 +115,12 @@ export const TransformWorkbench: React.FC<TransformWorkbenchProps> = ({
           )}
         >
           {/* Header */}
-          <div className="flex h-9 items-center justify-between border-b border-border bg-surface px-3 py-1.5">
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-surface-elevated px-2 py-0.5 font-mono text-2xs font-semibold text-text-secondary uppercase tracking-wider">
+          <div className="flex h-10 items-center justify-between border-b border-border bg-surface px-3.5 sm:px-4 py-1.5">
+            <div className="flex items-center gap-2.5">
+              <span className="rounded bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Input JSON
               </span>
-              <span className="font-mono text-3xs text-text-muted">
+              <span className="font-mono text-xs text-text-muted">
                 {inputLineCount} {inputLineCount === 1 ? 'line' : 'lines'}
               </span>
             </div>
@@ -132,9 +132,9 @@ export const TransformWorkbench: React.FC<TransformWorkbenchProps> = ({
                 onClick={() => transform.setInput(SAMPLE_JSON)}
                 data-testid="transform-load-sample-btn"
                 aria-label="Load Sample JSON"
-                className="h-6 gap-1 px-2 text-3xs text-text-secondary hover:text-text-primary"
+                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary"
               >
-                <FileText className="h-3 w-3" />
+                <FileText className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Sample</span>
               </Button>
               <Button
@@ -143,20 +143,20 @@ export const TransformWorkbench: React.FC<TransformWorkbenchProps> = ({
                 onClick={() => transform.setInput('')}
                 data-testid="transform-clear-btn"
                 aria-label="Clear input JSON"
-                className="h-6 gap-1 px-2 text-3xs text-text-secondary hover:text-error hover:bg-error/10"
+                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-error hover:bg-error/10"
               >
-                <Trash2 className="h-3 w-3" />
+                <Trash2 className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Clear</span>
               </Button>
             </div>
           </div>
 
           {/* Input Textarea with Line Numbers */}
-          <div className="flex flex-1 overflow-hidden font-mono text-xs">
+          <div className="flex flex-1 overflow-hidden font-mono text-xs sm:text-sm">
             {/* Line Numbers */}
             <div
               aria-hidden="true"
-              className="select-none border-r border-border bg-surface px-2.5 py-3 text-right text-text-muted font-mono"
+              className="w-14 shrink-0 select-none border-r border-border bg-surface/40 py-3 pl-3.5 pr-3.5 text-right text-text-muted font-mono text-xs leading-6"
             >
               {Array.from({ length: Math.max(1, inputLineCount) }, (_, i) => (
                 <div key={i} className="h-6 leading-6">
@@ -176,7 +176,7 @@ export const TransformWorkbench: React.FC<TransformWorkbenchProps> = ({
               onChange={(e) => transform.setInput(e.target.value)}
               placeholder="Paste or type JSON here to transform..."
               className={cn(
-                'flex-1 resize-none bg-transparent p-3 font-mono text-text-primary placeholder:text-text-muted outline-none focus:ring-0 leading-6',
+                'flex-1 resize-none bg-transparent py-3 px-4 font-mono text-xs sm:text-sm text-text-primary placeholder:text-text-muted outline-none focus:ring-0 leading-6',
                 transform.wordWrap
                   ? 'whitespace-pre-wrap break-words'
                   : 'whitespace-pre overflow-auto'

@@ -72,24 +72,24 @@ export function Toolbar({
       id="toolbar"
       role="toolbar"
       aria-label="Workbench actions"
-      className="flex h-10 items-center justify-between border-b border-border bg-surface px-3 py-1"
+      className="flex h-11 sm:h-12 items-center justify-between border-b border-border bg-surface px-3 sm:px-4 py-1.5 overflow-x-auto scrollbar-none"
     >
       {/* Primary and secondary actions */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
         {/* Format Action (Primary) */}
         <Button
           id="toolbar-format"
           aria-label="Format JSON"
           variant="accent"
-          size="sm"
+          size="default"
           onClick={() => {
             onFormat?.()
           }}
-          className="gap-1.5 font-semibold text-accent-foreground shadow-sm hover:opacity-95"
+          className="h-9 px-3.5 sm:px-4 gap-2 font-semibold text-accent-foreground shadow-sm hover:opacity-95 shrink-0"
         >
-          <Braces className="h-3.5 w-3.5" />
-          <span>Format</span>
-          <kbd className="hidden lg:inline-flex items-center rounded bg-accent-foreground/15 px-1 py-0.5 text-3xs font-mono font-medium text-accent-foreground">
+          <Braces className="h-4 w-4 shrink-0" />
+          <span className="text-sm font-semibold">Format</span>
+          <kbd className="hidden lg:inline-flex items-center rounded bg-accent-foreground/20 px-1.5 py-0.5 text-xs font-mono font-semibold tracking-wide text-accent-foreground shrink-0">
             Ctrl+Shift+F
           </kbd>
         </Button>
@@ -99,12 +99,12 @@ export function Toolbar({
           id="toolbar-minify"
           aria-label="Minify JSON"
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={onMinify}
-          className="gap-1.5 text-text-secondary hover:bg-surface-elevated hover:text-text-primary"
+          className="h-9 px-3 gap-2 text-text-secondary hover:bg-surface-elevated hover:text-text-primary shrink-0"
         >
-          <Minimize2 className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Minify</span>
+          <Minimize2 className="h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline text-sm">Minify</span>
         </Button>
 
         {/* Validate Action */}
@@ -112,16 +112,16 @@ export function Toolbar({
           id="toolbar-validate"
           aria-label="Validate JSON"
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={onValidate}
-          className="gap-1.5 text-text-secondary hover:bg-surface-elevated hover:text-text-primary"
+          className="h-9 px-3 gap-2 text-text-secondary hover:bg-surface-elevated hover:text-text-primary shrink-0"
         >
-          <CheckCircle2 className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Validate</span>
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline text-sm">Validate</span>
         </Button>
 
         {/* Divider */}
-        <div className="mx-1 h-4 w-px bg-border" />
+        <div className="mx-1 sm:mx-1.5 h-5 w-px bg-border shrink-0" />
 
         {/* Search Action (Interactive in Phase 2) */}
         <Button
@@ -129,22 +129,22 @@ export function Toolbar({
           aria-label="Search"
           aria-pressed={isSearchActive}
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={onToggleSearch}
           className={cn(
-            'gap-1.5 transition-colors',
+            'h-9 px-3 gap-2 transition-colors shrink-0',
             isSearchActive
-              ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs'
+              ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
               : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
           )}
         >
-          <Search className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Search</span>
+          <Search className="h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline text-sm">Search</span>
           <kbd
             className={cn(
-              'hidden lg:inline-flex items-center rounded px-1 py-0.2 text-3xs font-mono',
+              'hidden lg:inline-flex items-center rounded px-1.5 py-0.5 text-xs font-mono shrink-0',
               isSearchActive
-                ? 'bg-accent/20 text-accent font-semibold'
+                ? 'bg-accent/25 text-accent font-semibold'
                 : 'bg-surface-elevated text-text-muted'
             )}
           >
@@ -158,7 +158,7 @@ export function Toolbar({
           aria-label="Compare / Diff"
           aria-pressed={activeView === 'diff'}
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={() =>
             onViewChange?.(activeView === 'diff' ? 'editor' : 'diff')
           }
@@ -168,14 +168,14 @@ export function Toolbar({
               : 'Open Structural Diff / Compare'
           }
           className={cn(
-            'gap-1.5 transition-colors relative',
+            'h-9 px-3 gap-2 transition-colors relative shrink-0',
             activeView === 'diff'
               ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
               : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
           )}
         >
-          <GitCompareArrows className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Diff</span>
+          <GitCompareArrows className="h-4 w-4 shrink-0" />
+          <span className="hidden md:inline text-sm">Diff</span>
         </Button>
 
         {/* Tree Inspector View Toggle */}
@@ -184,7 +184,7 @@ export function Toolbar({
           aria-label="Tree View"
           aria-pressed={activeView === 'tree'}
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={() =>
             onViewChange?.(activeView === 'tree' ? 'editor' : 'tree')
           }
@@ -192,14 +192,14 @@ export function Toolbar({
             activeView === 'tree' ? 'Switch to Editor' : 'Open Tree Inspector'
           }
           className={cn(
-            'gap-1.5 transition-colors relative',
+            'h-9 px-3 gap-2 transition-colors relative shrink-0',
             activeView === 'tree'
               ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
               : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
           )}
         >
-          <FolderTree className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Tree</span>
+          <FolderTree className="h-4 w-4 shrink-0" />
+          <span className="hidden md:inline text-sm">Tree</span>
         </Button>
 
         {/* Transform View Toggle */}
@@ -208,7 +208,7 @@ export function Toolbar({
           aria-label="Transform"
           aria-pressed={activeView === 'transform'}
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={() =>
             onViewChange?.(activeView === 'transform' ? 'editor' : 'transform')
           }
@@ -218,14 +218,14 @@ export function Toolbar({
               : 'Open JSON Transform Tools'
           }
           className={cn(
-            'gap-1.5 transition-colors relative',
+            'h-9 px-3 gap-2 transition-colors relative shrink-0',
             activeView === 'transform'
               ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
               : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
           )}
         >
-          <Wand2 className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Transform</span>
+          <Wand2 className="h-4 w-4 shrink-0" />
+          <span className="hidden md:inline text-sm">Transform</span>
         </Button>
 
         {/* Convert View Toggle */}
@@ -234,7 +234,7 @@ export function Toolbar({
           aria-label="Convert"
           aria-pressed={activeView === 'convert'}
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={() =>
             onViewChange?.(activeView === 'convert' ? 'editor' : 'convert')
           }
@@ -244,14 +244,14 @@ export function Toolbar({
               : 'Open JSON Convert Tools'
           }
           className={cn(
-            'gap-1.5 transition-colors relative',
+            'h-9 px-3 gap-2 transition-colors relative shrink-0',
             activeView === 'convert'
               ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
               : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
           )}
         >
-          <ArrowRightLeft className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Convert</span>
+          <ArrowRightLeft className="h-4 w-4 shrink-0" />
+          <span className="hidden md:inline text-sm">Convert</span>
         </Button>
 
         {/* Test / Developer View Toggle */}
@@ -260,7 +260,7 @@ export function Toolbar({
           aria-label="Developer & Testing Tools"
           aria-pressed={activeView === 'testing'}
           variant="ghost"
-          size="sm"
+          size="default"
           onClick={() =>
             onViewChange?.(activeView === 'testing' ? 'editor' : 'testing')
           }
@@ -270,14 +270,14 @@ export function Toolbar({
               : 'Open Developer & Testing Tools'
           }
           className={cn(
-            'gap-1.5 transition-colors relative',
+            'h-9 px-3 gap-2 transition-colors relative shrink-0',
             activeView === 'testing'
               ? 'border border-accent/40 bg-accent/15 text-accent shadow-xs font-semibold'
               : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
           )}
         >
-          <TestTube className="h-3.5 w-3.5" />
-          <span className="hidden md:inline">Test</span>
+          <TestTube className="h-4 w-4 shrink-0" />
+          <span className="hidden md:inline text-sm">Test</span>
         </Button>
 
         <MoreMenu
@@ -289,19 +289,19 @@ export function Toolbar({
       </div>
 
       {/* Right Controls: Indentation Selector */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              size="sm"
-              className="h-7 gap-1.5 border-border bg-surface-elevated px-2.5 text-xs text-text-secondary hover:text-text-primary"
+              size="default"
+              className="h-9 gap-2 border-border bg-surface-elevated px-3 text-xs sm:text-sm text-text-secondary hover:text-text-primary shrink-0"
             >
               <span className="text-text-muted">Indent:</span>
-              <span className="font-mono text-text-primary">
+              <span className="font-mono text-text-primary font-medium">
                 {currentIndentLabel}
               </span>
-              <ChevronDown className="h-3 w-3 text-text-muted" />
+              <ChevronDown className="h-3.5 w-3.5 text-text-muted" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

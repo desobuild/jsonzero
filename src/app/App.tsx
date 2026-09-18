@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useRef, lazy, Suspense } from 'react'
 import { Header } from '@/components/shared/Header'
-import { PrivacyIndicator } from '@/components/shared/PrivacyIndicator'
 import { Toolbar } from '@/components/shared/Toolbar'
 import { StatusBar } from '@/components/shared/StatusBar'
 import { Toast, type ToastType } from '@/components/ui/toast'
@@ -153,7 +152,7 @@ export function App() {
   }, [search])
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
+    <div className="flex h-screen flex-col overflow-hidden bg-background px-3 sm:px-4 lg:px-6">
       {/* Update notification banner if a new version is waiting */}
       {pwa.isUpdateAvailable && (
         <div
@@ -173,104 +172,104 @@ export function App() {
         </div>
       )}
 
-      {/* Header */}
-      <Header canInstall={pwa.canInstall} onInstall={pwa.install} />
+      {/* Main framed workspace container */}
+      <div className="mx-auto flex h-full w-full max-w-[1920px] flex-1 flex-col overflow-hidden border-x border-border/70 shadow-xs">
+        {/* Header */}
+        <Header canInstall={pwa.canInstall} onInstall={pwa.install} />
 
-      {/* Privacy guarantee banner */}
-      <PrivacyIndicator />
+        {/* Primary workbench toolbar */}
+        <Toolbar
+          onFormat={formatter.format}
+          onMinify={formatter.minify}
+          onValidate={formatter.validate}
+          indent={formatter.indent}
+          onIndentChange={formatter.setIndent}
+          onFutureToolSelect={handleFutureToolSelect}
+          onSelectTransform={handleSelectTransform}
+          onSelectConvert={handleSelectConvert}
+          onSelectTesting={handleSelectTesting}
+          isSearchActive={search.isOpen}
+          onToggleSearch={handleToggleSearch}
+          activeView={activeView}
+          onViewChange={(view) => {
+            setActiveView(view)
+          }}
+        />
 
-      {/* Primary workbench toolbar */}
-      <Toolbar
-        onFormat={formatter.format}
-        onMinify={formatter.minify}
-        onValidate={formatter.validate}
-        indent={formatter.indent}
-        onIndentChange={formatter.setIndent}
-        onFutureToolSelect={handleFutureToolSelect}
-        onSelectTransform={handleSelectTransform}
-        onSelectConvert={handleSelectConvert}
-        onSelectTesting={handleSelectTesting}
-        isSearchActive={search.isOpen}
-        onToggleSearch={handleToggleSearch}
-        activeView={activeView}
-        onViewChange={(view) => {
-          setActiveView(view)
-        }}
-      />
+        {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area OR Transform Area OR Convert Area OR Testing Area */}
+        <main className="flex flex-1 flex-col overflow-hidden">
+          {activeView === 'editor' ? (
+            <Workbench
+              formatter={formatter}
+              search={search}
+              inputTextareaRef={inputTextareaRef}
+            />
+          ) : activeView === 'tree' ? (
+            <Suspense
+              fallback={<WorkbenchLoadingFallback label="Tree Inspector" />}
+            >
+              <Inspector
+                input={formatter.input}
+                onToast={showToast}
+                onSwitchToEditor={() => setActiveView('editor')}
+              />
+            </Suspense>
+          ) : activeView === 'diff' ? (
+            <Suspense
+              fallback={<WorkbenchLoadingFallback label="Structural Diff" />}
+            >
+              <CompareWorkbench
+                initialJsonA={formatter.input || undefined}
+                onToast={showToast}
+              />
+            </Suspense>
+          ) : activeView === 'transform' ? (
+            <Suspense
+              fallback={<WorkbenchLoadingFallback label="Transform Tools" />}
+            >
+              <TransformWorkbench
+                initialInput={formatter.input}
+                initialTransform={selectedTransformTool}
+                onApply={(newContent) => {
+                  formatter.setInput(newContent)
+                }}
+                onToast={showToast}
+              />
+            </Suspense>
+          ) : activeView === 'convert' ? (
+            <Suspense
+              fallback={<WorkbenchLoadingFallback label="Convert Tools" />}
+            >
+              <ConvertWorkbench
+                initialInput={formatter.input}
+                initialConvert={selectedConvertTool}
+                onToast={showToast}
+              />
+            </Suspense>
+          ) : (
+            <Suspense
+              fallback={<WorkbenchLoadingFallback label="Testing Tools" />}
+            >
+              <TestingWorkbench
+                initialInput={formatter.input}
+                initialTool={selectedTestingTool}
+                onToast={showToast}
+              />
+            </Suspense>
+          )}
+        </main>
 
-      {/* Main Dual-Pane Editor Area OR Inspector Area OR Compare Area OR Transform Area OR Convert Area OR Testing Area */}
-      <main className="flex flex-1 flex-col overflow-hidden">
-        {activeView === 'editor' ? (
-          <Workbench
-            formatter={formatter}
-            search={search}
-            inputTextareaRef={inputTextareaRef}
-          />
-        ) : activeView === 'tree' ? (
-          <Suspense
-            fallback={<WorkbenchLoadingFallback label="Tree Inspector" />}
-          >
-            <Inspector
-              input={formatter.input}
-              onToast={showToast}
-              onSwitchToEditor={() => setActiveView('editor')}
-            />
-          </Suspense>
-        ) : activeView === 'diff' ? (
-          <Suspense
-            fallback={<WorkbenchLoadingFallback label="Structural Diff" />}
-          >
-            <CompareWorkbench
-              initialJsonA={formatter.input || undefined}
-              onToast={showToast}
-            />
-          </Suspense>
-        ) : activeView === 'transform' ? (
-          <Suspense
-            fallback={<WorkbenchLoadingFallback label="Transform Tools" />}
-          >
-            <TransformWorkbench
-              initialInput={formatter.input}
-              initialTransform={selectedTransformTool}
-              onApply={(newContent) => {
-                formatter.setInput(newContent)
-              }}
-              onToast={showToast}
-            />
-          </Suspense>
-        ) : activeView === 'convert' ? (
-          <Suspense
-            fallback={<WorkbenchLoadingFallback label="Convert Tools" />}
-          >
-            <ConvertWorkbench
-              initialInput={formatter.input}
-              initialConvert={selectedConvertTool}
-              onToast={showToast}
-            />
-          </Suspense>
-        ) : (
-          <Suspense
-            fallback={<WorkbenchLoadingFallback label="Testing Tools" />}
-          >
-            <TestingWorkbench
-              initialInput={formatter.input}
-              initialTool={selectedTestingTool}
-              onToast={showToast}
-            />
-          </Suspense>
-        )}
-      </main>
-
-      {/* Live Status Bar */}
-      <StatusBar
-        validationState={formatter.validationState}
-        lineCount={formatter.inputStats.lineCount}
-        keyCount={formatter.inputStats.keyCount}
-        byteCount={formatter.inputStats.byteCount}
-        processingTimeMs={formatter.processingTimeMs}
-        lastOperation={formatter.lastOperation}
-        isOnline={pwa.isOnline}
-      />
+        {/* Live Status Bar */}
+        <StatusBar
+          validationState={formatter.validationState}
+          lineCount={formatter.inputStats.lineCount}
+          keyCount={formatter.inputStats.keyCount}
+          byteCount={formatter.inputStats.byteCount}
+          processingTimeMs={formatter.processingTimeMs}
+          lastOperation={formatter.lastOperation}
+          isOnline={pwa.isOnline}
+        />
+      </div>
 
       {/* Toast Notifications */}
       {toast && (

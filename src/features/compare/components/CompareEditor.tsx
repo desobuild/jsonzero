@@ -57,16 +57,18 @@ export function CompareEditor({
       className="flex h-full flex-col overflow-hidden border-border bg-surface"
     >
       {/* Pane Header */}
-      <div className="flex h-9 items-center justify-between border-b border-border bg-surface-elevated/80 px-3 py-1 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-text-primary">{title}</span>
+      <div className="flex h-10 items-center justify-between border-b border-border bg-surface-elevated/80 px-3.5 sm:px-4 py-1 text-xs">
+        <div className="flex items-center gap-2.5">
+          <span className="font-semibold text-text-primary text-sm">
+            {title}
+          </span>
           <span className="text-border">·</span>
-          <span className="font-mono text-3xs text-text-muted">
+          <span className="font-mono text-xs text-text-muted">
             {lineCount} {lineCount === 1 ? 'line' : 'lines'},{' '}
             {formatBytes(byteCount)}
           </span>
           <span
-            className={`rounded px-1.5 py-0.2 font-mono text-3xs font-medium ${
+            className={`rounded px-2 py-0.5 font-mono text-xs font-medium ${
               parsed.success
                 ? 'bg-accent/15 text-accent'
                 : 'bg-error/15 text-error'
@@ -77,16 +79,16 @@ export function CompareEditor({
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"
             size="sm"
             onClick={handlePaste}
             aria-label={`Paste into ${title}`}
             title={`Paste into ${title}`}
-            className="h-6 gap-1 px-1.5 text-3xs text-text-secondary hover:text-text-primary"
+            className="h-7 gap-1.5 px-2 text-xs text-text-secondary hover:text-text-primary"
           >
-            <Clipboard className="h-3 w-3" />
+            <Clipboard className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Paste</span>
           </Button>
 
@@ -96,9 +98,9 @@ export function CompareEditor({
             onClick={onFormat}
             aria-label={`Format ${title}`}
             title={`Format ${title}`}
-            className="h-6 gap-1 px-1.5 text-3xs text-text-secondary hover:text-text-primary"
+            className="h-7 gap-1.5 px-2 text-xs text-text-secondary hover:text-text-primary"
           >
-            <Braces className="h-3 w-3" />
+            <Braces className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Format</span>
           </Button>
 
@@ -108,9 +110,9 @@ export function CompareEditor({
             onClick={onClear}
             aria-label={`Clear ${title}`}
             title={`Clear ${title}`}
-            className="h-6 gap-1 px-1.5 text-3xs text-text-secondary hover:text-text-primary"
+            className="h-7 gap-1.5 px-2 text-xs text-text-secondary hover:text-text-primary"
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Clear</span>
           </Button>
         </div>

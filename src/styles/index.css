@@ -74,11 +74,19 @@
   --radius-md: 5px;
   --radius-lg: 8px;
 
-  /* Font sizes */
-  --text-3xs: 0.5625rem;
-  --text-3xs--line-height: 0.75rem;
-  --text-2xs: 0.625rem;
-  --text-2xs--line-height: 0.875rem;
+  /* Font sizes with explicit readability hierarchy */
+  --text-3xs: 11px;
+  --text-3xs--line-height: 15px;
+  --text-2xs: 12px;
+  --text-2xs--line-height: 16px;
+  --text-xs: 12px;
+  --text-xs--line-height: 18px;
+  --text-sub: 13px;
+  --text-sub--line-height: 18px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 15px;
+  --text-base--line-height: 22px;
 }
 
 /* ─── Dark theme (default) ─── */

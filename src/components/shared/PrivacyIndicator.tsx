@@ -1,15 +1,20 @@
 import { ShieldCheck } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-interface PrivacyIndicatorProps {
+export interface PrivacyIndicatorProps {
   /** Compact mode shows only the essential message */
   compact?: boolean
+  className?: string
 }
 
-export function PrivacyIndicator({ compact = false }: PrivacyIndicatorProps) {
+export function PrivacyIndicator({
+  compact = false,
+  className,
+}: PrivacyIndicatorProps) {
   if (compact) {
     return (
-      <div className="flex items-center gap-1.5 text-2xs text-text-muted">
-        <ShieldCheck className="h-3 w-3 text-accent" />
+      <div className="flex items-center gap-1.5 text-xs text-text-muted select-none">
+        <ShieldCheck className="h-3.5 w-3.5 text-accent shrink-0" />
         <span>100% client-side</span>
       </div>
     )
@@ -18,15 +23,19 @@ export function PrivacyIndicator({ compact = false }: PrivacyIndicatorProps) {
   return (
     <div
       id="privacy-indicator"
-      className="flex items-center justify-center gap-3 border-b border-border/60 bg-surface/50 px-3 py-1.5 text-center select-none"
+      className={cn(
+        'flex flex-wrap items-center justify-center gap-x-2.5 gap-y-0.5 text-center select-none px-2',
+        className
+      )}
     >
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 shrink-0">
         <ShieldCheck className="h-3.5 w-3.5 text-accent shrink-0" />
-        <span className="text-xs font-medium text-text-secondary">
+        <span className="text-xs sm:text-[13px] font-medium text-text-secondary">
           Your JSON stays in your browser.
         </span>
       </div>
-      <span className="hidden text-2xs text-text-muted sm:inline">
+      <span className="hidden xl:inline text-border">·</span>
+      <span className="text-xs text-text-muted hidden sm:inline">
         No ads · No accounts · No selling data · 100% client-side
       </span>
     </div>

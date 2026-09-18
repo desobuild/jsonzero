@@ -146,10 +146,10 @@ export function MoreMenu({
           data-testid="toolbar-more"
           aria-label="More tools"
           variant="ghost"
-          size="sm"
-          className="gap-1.5 text-text-secondary hover:bg-surface-elevated hover:text-text-primary"
+          size="default"
+          className="h-9 px-3 gap-2 text-text-secondary hover:bg-surface-elevated hover:text-text-primary shrink-0 text-sm"
         >
-          <MoreHorizontal className="h-3.5 w-3.5" />
+          <MoreHorizontal className="h-4 w-4 shrink-0" />
           <span className="hidden sm:inline">More</span>
         </Button>
       </DropdownMenuTrigger>

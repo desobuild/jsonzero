@@ -54,15 +54,15 @@ export const ConvertPreview: React.FC<ConvertPreviewProps> = ({
       className="flex flex-1 flex-col overflow-hidden bg-background"
     >
       {/* Pane Header */}
-      <div className="flex h-9 items-center justify-between border-b border-border bg-surface px-3 py-1.5">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-text-primary">
+      <div className="flex h-10 items-center justify-between border-b border-border bg-surface px-3.5 sm:px-4 py-1.5">
+        <div className="flex items-center gap-2.5">
+          <span className="text-sm font-semibold text-text-primary">
             {isTable ? 'Table Preview' : 'Generated Output'}
           </span>
           {isSuccess &&
             (preview || (tableData && tableData.rows.length > 0)) && (
-              <span className="flex items-center gap-1 rounded bg-accent/15 px-1.5 py-0.5 text-3xs font-medium text-accent">
-                <CheckCircle2 className="h-3 w-3" />
+              <span className="flex items-center gap-1.5 rounded bg-accent/15 px-2 py-0.5 text-xs font-medium text-accent">
+                <CheckCircle2 className="h-3.5 w-3.5" />
                 <span>
                   {isTable
                     ? `${tableData?.totalRows} rows`
@@ -71,8 +71,8 @@ export const ConvertPreview: React.FC<ConvertPreviewProps> = ({
               </span>
             )}
           {error && (
-            <span className="flex items-center gap-1 rounded bg-error/15 px-1.5 py-0.5 text-3xs font-medium text-error">
-              <AlertCircle className="h-3 w-3" />
+            <span className="flex items-center gap-1.5 rounded bg-error/15 px-2 py-0.5 text-xs font-medium text-error">
+              <AlertCircle className="h-3.5 w-3.5" />
               <span>Invalid JSON</span>
             </span>
           )}
@@ -87,9 +87,9 @@ export const ConvertPreview: React.FC<ConvertPreviewProps> = ({
               onClick={onCopy}
               data-testid="copy-result-btn"
               aria-label="Copy conversion result"
-              className="h-6 gap-1 px-2 text-3xs text-text-secondary hover:text-text-primary"
+              className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary"
             >
-              <Copy className="h-3 w-3" />
+              <Copy className="h-3.5 w-3.5" />
               <span>Copy</span>
             </Button>
             <Button
@@ -98,9 +98,9 @@ export const ConvertPreview: React.FC<ConvertPreviewProps> = ({
               onClick={onDownload}
               data-testid="download-result-btn"
               aria-label="Download conversion result"
-              className="h-6 gap-1 px-2 text-3xs text-text-secondary hover:text-text-primary"
+              className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary"
             >
-              <Download className="h-3 w-3" />
+              <Download className="h-3.5 w-3.5" />
               <span>Download</span>
             </Button>
           </div>
@@ -123,7 +123,7 @@ export const ConvertPreview: React.FC<ConvertPreviewProps> = ({
                     Unable to convert JSON
                   </h4>
                   {(errorLine !== undefined || errorColumn !== undefined) && (
-                    <p className="font-mono text-3xs text-error/90">
+                    <p className="font-mono text-xs text-error/90">
                       Line {errorLine ?? 1}, column {errorColumn ?? 1}
                     </p>
                   )}
@@ -141,14 +141,14 @@ export const ConvertPreview: React.FC<ConvertPreviewProps> = ({
             <p>Paste or type JSON on the left to preview generated code.</p>
           </div>
         ) : (
-          <div className="flex flex-1 overflow-hidden font-mono text-xs">
+          <div className="flex flex-1 overflow-hidden font-mono text-xs sm:text-sm">
             {/* Line Numbers */}
             <div
               aria-hidden="true"
-              className="select-none border-r border-border bg-surface px-2.5 py-3 text-right text-text-muted font-mono"
+              className="w-14 shrink-0 select-none border-r border-border bg-surface/40 py-3 pl-3.5 pr-3.5 text-right text-text-muted font-mono text-xs leading-6"
             >
               {Array.from({ length: lineCount }, (_, i) => (
-                <div key={i} className="h-5 leading-5">
+                <div key={i} className="h-6 leading-6">
                   {i + 1}
                 </div>
               ))}
@@ -161,7 +161,7 @@ export const ConvertPreview: React.FC<ConvertPreviewProps> = ({
               tabIndex={0}
               aria-label="Generated Code Output"
               className={cn(
-                'flex-1 p-3 font-mono text-text-primary outline-none focus-visible:ring-1 focus-visible:ring-accent leading-5',
+                'flex-1 py-3 px-4 font-mono text-xs sm:text-sm text-text-primary outline-none focus-visible:ring-1 focus-visible:ring-accent leading-6',
                 wordWrap
                   ? 'whitespace-pre-wrap break-words overflow-y-auto'
                   : 'whitespace-pre overflow-auto'

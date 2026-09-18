@@ -215,20 +215,20 @@ export function Workbench({
           )}
         >
           {/* Pane Header */}
-          <div className="flex h-9 shrink-0 items-center justify-between border-b border-border bg-surface px-3">
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-surface-elevated px-2 py-0.5 font-mono text-2xs font-semibold text-text-secondary uppercase tracking-wider">
+          <div className="flex h-10 shrink-0 items-center justify-between border-b border-border bg-surface px-3.5 sm:px-4 py-1.5">
+            <div className="flex items-center gap-2.5">
+              <span className="rounded bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Input JSON
               </span>
               {inputStats.characterCount > 0 && (
-                <span className="hidden text-3xs text-text-muted sm:inline">
+                <span className="hidden text-xs text-text-muted sm:inline">
                   {inputStats.lineCount} lines ·{' '}
                   {formatBytes(inputStats.byteCount)}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -244,13 +244,13 @@ export function Workbench({
                 onClick={() => setWordWrap((prev) => !prev)}
                 title={wordWrap ? 'Disable Word Wrap' : 'Enable Word Wrap'}
                 className={cn(
-                  'h-6 gap-1 px-2 text-2xs transition-colors',
+                  'h-7 gap-1.5 px-2.5 text-xs transition-colors',
                   wordWrap
-                    ? 'border border-accent/40 bg-accent/15 text-accent'
+                    ? 'border border-accent/40 bg-accent/15 text-accent font-medium'
                     : 'text-text-secondary hover:text-text-primary'
                 )}
               >
-                <WrapText className="h-3 w-3" />
+                <WrapText className="h-3.5 w-3.5" />
                 <span className="hidden xs:inline">Wrap</span>
               </Button>
               <Button
@@ -258,9 +258,9 @@ export function Workbench({
                 size="sm"
                 onClick={handleOpenFileClick}
                 title="Open JSON file from disk"
-                className="h-6 gap-1 px-2 text-2xs text-text-secondary hover:text-text-primary"
+                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary"
               >
-                <Upload className="h-3 w-3" />
+                <Upload className="h-3.5 w-3.5" />
                 <span>Open JSON</span>
               </Button>
               <Button
@@ -270,9 +270,9 @@ export function Workbench({
                 onClick={clear}
                 disabled={!input && !output && !error}
                 title="Clear editor"
-                className="h-6 gap-1 px-2 text-2xs text-text-secondary hover:text-text-primary disabled:opacity-30"
+                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary disabled:opacity-30"
               >
-                <Trash2 className="h-3 w-3" />
+                <Trash2 className="h-3.5 w-3.5" />
                 <span>Clear</span>
               </Button>
             </div>
@@ -344,13 +344,13 @@ export function Workbench({
           )}
         >
           {/* Pane Header */}
-          <div className="flex h-9 shrink-0 items-center justify-between border-b border-border bg-surface px-3">
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-surface-elevated px-2 py-0.5 font-mono text-2xs font-semibold text-text-secondary uppercase tracking-wider">
+          <div className="flex h-10 shrink-0 items-center justify-between border-b border-border bg-surface px-3.5 sm:px-4 py-1.5">
+            <div className="flex items-center gap-2.5">
+              <span className="rounded bg-surface-elevated px-2.5 py-1 font-mono text-xs font-semibold text-text-secondary uppercase tracking-wider">
                 Formatted JSON
               </span>
               {outputStats.characterCount > 0 && (
-                <span className="hidden text-3xs text-text-muted sm:inline">
+                <span className="hidden text-xs text-text-muted sm:inline">
                   {outputStats.lineCount} lines ·{' '}
                   {formatBytes(outputStats.byteCount)}
                   {outputStats.keyCount > 0 &&
@@ -359,7 +359,7 @@ export function Workbench({
               )}
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <Button
                 variant={copied ? 'accent' : 'ghost'}
                 size="sm"
@@ -367,16 +367,16 @@ export function Workbench({
                 onClick={handleCopy}
                 disabled={!output}
                 title="Copy formatted JSON to clipboard"
-                className="h-6 gap-1 px-2 text-2xs disabled:opacity-30"
+                className="h-7 gap-1.5 px-2.5 text-xs disabled:opacity-30"
               >
                 {copied ? (
                   <>
-                    <Check className="h-3 w-3" />
+                    <Check className="h-3.5 w-3.5" />
                     <span>Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3 w-3" />
+                    <Copy className="h-3.5 w-3.5" />
                     <span>Copy</span>
                   </>
                 )}
@@ -388,9 +388,9 @@ export function Workbench({
                 onClick={handleDownload}
                 disabled={!output}
                 title="Download JSON locally"
-                className="h-6 gap-1 px-2 text-2xs text-text-secondary hover:text-text-primary disabled:opacity-30"
+                className="h-7 gap-1.5 px-2.5 text-xs text-text-secondary hover:text-text-primary disabled:opacity-30"
               >
-                <Download className="h-3 w-3" />
+                <Download className="h-3.5 w-3.5" />
                 <span>Download</span>
               </Button>
             </div>

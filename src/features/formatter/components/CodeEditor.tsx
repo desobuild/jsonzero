@@ -274,7 +274,7 @@ export function CodeEditor({
       <div
         ref={gutterRef}
         aria-hidden="true"
-        className="flex w-11 shrink-0 select-none flex-col overflow-hidden border-r border-border bg-surface/40 py-2.5 pr-2.5 text-right font-mono text-xs leading-6 text-text-dim"
+        className="flex w-14 shrink-0 select-none flex-col overflow-hidden border-r border-border bg-surface/40 py-3 pl-3.5 pr-3.5 text-right font-mono text-xs leading-6 text-text-muted"
       >
         {gutterTopPadding > 0 && (
           <div style={{ height: `${gutterTopPadding}px` }} aria-hidden="true" />
@@ -331,7 +331,7 @@ export function CodeEditor({
                 ref={backdropRef}
                 aria-hidden="true"
                 className={cn(
-                  'pointer-events-none absolute inset-0 z-0 h-full w-full m-0 overflow-hidden py-2.5 px-3 font-mono text-xs sm:text-sm leading-6 select-none',
+                  'pointer-events-none absolute inset-0 z-0 h-full w-full m-0 overflow-hidden py-3 px-4 font-mono text-xs sm:text-sm leading-6 select-none',
                   wordWrap
                     ? 'whitespace-pre-wrap break-words overflow-x-hidden'
                     : 'whitespace-pre overflow-x-auto'
@@ -389,7 +389,7 @@ export function CodeEditor({
               autoCorrect="off"
               placeholder={value ? undefined : placeholder}
               className={cn(
-                'relative z-10 h-full w-full resize-none border-0 bg-transparent py-2.5 px-3 font-mono text-xs sm:text-sm leading-6 focus:outline-none',
+                'relative z-10 h-full w-full resize-none border-0 bg-transparent py-3 px-4 font-mono text-xs sm:text-sm leading-6 focus:outline-none',
                 wordWrap
                   ? 'whitespace-pre-wrap break-words overflow-x-hidden'
                   : 'whitespace-pre overflow-x-auto',

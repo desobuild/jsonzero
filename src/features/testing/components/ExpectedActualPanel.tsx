@@ -76,7 +76,7 @@ export const ExpectedActualPanel: React.FC<ExpectedActualPanelProps> = ({
             onClick={onGenerateAssertions}
             data-testid="generate-diff-assertions-btn"
             aria-label="Generate Assertions from Diff"
-            className="h-6 gap-1 px-2 text-3xs font-semibold text-accent-dark shadow-sm hover:opacity-95"
+            className="h-6 gap-1 px-2 text-3xs font-semibold text-accent-foreground shadow-sm hover:opacity-95"
           >
             <span>Generate Assertions</span>
             <ArrowRight className="h-3 w-3" />

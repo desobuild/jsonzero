@@ -91,7 +91,7 @@ export function DiffSummary({
         {summary.added > 0 && (
           <span
             data-testid="summary-added-badge"
-            className="inline-flex items-center rounded bg-[#68DBA9]/15 px-2 py-0.5 font-mono text-3xs font-medium text-[#68DBA9]"
+            className="inline-flex items-center rounded bg-diff-added/15 px-2 py-0.5 font-mono text-3xs font-medium text-diff-added"
           >
             + {summary.added} Added
           </span>
@@ -100,7 +100,7 @@ export function DiffSummary({
         {summary.removed > 0 && (
           <span
             data-testid="summary-removed-badge"
-            className="inline-flex items-center rounded bg-[#FF7B72]/15 px-2 py-0.5 font-mono text-3xs font-medium text-[#FF7B72]"
+            className="inline-flex items-center rounded bg-diff-removed/15 px-2 py-0.5 font-mono text-3xs font-medium text-diff-removed"
           >
             - {summary.removed} Removed
           </span>
@@ -109,7 +109,7 @@ export function DiffSummary({
         {summary.changed > 0 && (
           <span
             data-testid="summary-changed-badge"
-            className="inline-flex items-center rounded bg-[#F0C674]/15 px-2 py-0.5 font-mono text-3xs font-medium text-[#F0C674]"
+            className="inline-flex items-center rounded bg-diff-changed/15 px-2 py-0.5 font-mono text-3xs font-medium text-diff-changed"
           >
             ~ {summary.changed} Changed
           </span>

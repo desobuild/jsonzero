@@ -32,15 +32,15 @@ export function DiffRow({ entry, onToast }: DiffRowProps) {
   const kindBadge = {
     added: {
       label: '+ ADDED',
-      className: 'bg-[#68DBA9]/15 text-[#68DBA9] border-[#68DBA9]/30',
+      className: 'bg-diff-added/15 text-diff-added border-diff-added/30',
     },
     removed: {
       label: '- REMOVED',
-      className: 'bg-[#FF7B72]/15 text-[#FF7B72] border-[#FF7B72]/30',
+      className: 'bg-diff-removed/15 text-diff-removed border-diff-removed/30',
     },
     changed: {
       label: '~ CHANGED',
-      className: 'bg-[#F0C674]/15 text-[#F0C674] border-[#F0C674]/30',
+      className: 'bg-diff-changed/15 text-diff-changed border-diff-changed/30',
     },
     unchanged: {
       label: 'UNCHANGED',
@@ -122,8 +122,8 @@ export function DiffRow({ entry, onToast }: DiffRowProps) {
         {entry.kind === 'changed' && (
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {/* Old value */}
-            <div className="rounded border border-[#FF7B72]/20 bg-[#FF7B72]/5 p-2">
-              <div className="mb-1 flex items-center justify-between text-3xs text-[#FF7B72]">
+            <div className="rounded border border-diff-removed/20 bg-diff-removed/5 p-2">
+              <div className="mb-1 flex items-center justify-between text-3xs text-diff-removed">
                 <span className="font-semibold uppercase tracking-wider">
                   Old Value
                 </span>
@@ -142,8 +142,8 @@ export function DiffRow({ entry, onToast }: DiffRowProps) {
             </div>
 
             {/* New value */}
-            <div className="rounded border border-[#68DBA9]/20 bg-[#68DBA9]/5 p-2">
-              <div className="mb-1 flex items-center justify-between text-3xs text-[#68DBA9]">
+            <div className="rounded border border-diff-added/20 bg-diff-added/5 p-2">
+              <div className="mb-1 flex items-center justify-between text-3xs text-diff-added">
                 <span className="flex items-center gap-1 font-semibold uppercase tracking-wider">
                   <ArrowRight className="h-2.5 w-2.5" />
                   New Value
@@ -165,8 +165,8 @@ export function DiffRow({ entry, onToast }: DiffRowProps) {
         )}
 
         {entry.kind === 'added' && (
-          <div className="rounded border border-[#68DBA9]/20 bg-[#68DBA9]/5 p-2">
-            <div className="mb-1 flex items-center justify-between text-3xs text-[#68DBA9]">
+          <div className="rounded border border-diff-added/20 bg-diff-added/5 p-2">
+            <div className="mb-1 flex items-center justify-between text-3xs text-diff-added">
               <span className="font-semibold uppercase tracking-wider">
                 Added Value
               </span>
@@ -186,8 +186,8 @@ export function DiffRow({ entry, onToast }: DiffRowProps) {
         )}
 
         {entry.kind === 'removed' && (
-          <div className="rounded border border-[#FF7B72]/20 bg-[#FF7B72]/5 p-2">
-            <div className="mb-1 flex items-center justify-between text-3xs text-[#FF7B72]">
+          <div className="rounded border border-diff-removed/20 bg-diff-removed/5 p-2">
+            <div className="mb-1 flex items-center justify-between text-3xs text-diff-removed">
               <span className="font-semibold uppercase tracking-wider">
                 Removed Value
               </span>

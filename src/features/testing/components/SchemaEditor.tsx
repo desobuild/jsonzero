@@ -35,7 +35,7 @@ export const SchemaEditor: React.FC<SchemaEditorProps> = ({
       {/* Header */}
       <div className="flex h-9 items-center justify-between border-b border-border bg-surface px-3 py-1.5">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-text-primary">
+          <span className="rounded bg-surface-elevated px-2 py-0.5 font-mono text-2xs font-semibold text-text-secondary uppercase tracking-wider">
             JSON Schema
           </span>
           <span className="font-mono text-3xs text-text-muted">
@@ -77,7 +77,7 @@ export const SchemaEditor: React.FC<SchemaEditorProps> = ({
           className="select-none border-r border-border bg-surface px-2.5 py-3 text-right text-text-muted font-mono"
         >
           {Array.from({ length: Math.max(1, lineCount) }, (_, i) => (
-            <div key={i} className="h-5 leading-5">
+            <div key={i} className="h-6 leading-6">
               {i + 1}
             </div>
           ))}
@@ -94,7 +94,7 @@ export const SchemaEditor: React.FC<SchemaEditorProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder="Paste or write JSON Schema here..."
           className={cn(
-            'flex-1 resize-none bg-transparent p-3 font-mono text-text-primary placeholder:text-text-muted outline-none focus:ring-0 leading-5',
+            'flex-1 resize-none bg-transparent p-3 font-mono text-text-primary placeholder:text-text-muted outline-none focus:ring-0 leading-6',
             wordWrap
               ? 'whitespace-pre-wrap break-words'
               : 'whitespace-pre overflow-auto'

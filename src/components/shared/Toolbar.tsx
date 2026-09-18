@@ -85,11 +85,11 @@ export function Toolbar({
           onClick={() => {
             onFormat?.()
           }}
-          className="gap-1.5 font-semibold text-accent-dark shadow-sm hover:opacity-95"
+          className="gap-1.5 font-semibold text-accent-foreground shadow-sm hover:opacity-95"
         >
           <Braces className="h-3.5 w-3.5" />
           <span>Format</span>
-          <kbd className="hidden lg:inline-flex items-center rounded bg-accent-dark/15 px-1 py-0.5 text-3xs font-mono font-medium text-accent-dark">
+          <kbd className="hidden lg:inline-flex items-center rounded bg-accent-foreground/15 px-1 py-0.5 text-3xs font-mono font-medium text-accent-foreground">
             Ctrl+Shift+F
           </kbd>
         </Button>
@@ -176,12 +176,6 @@ export function Toolbar({
         >
           <GitCompareArrows className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Diff</span>
-          {activeView === 'diff' && (
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-accent"
-              aria-hidden="true"
-            />
-          )}
         </Button>
 
         {/* Tree Inspector View Toggle */}
@@ -206,12 +200,6 @@ export function Toolbar({
         >
           <FolderTree className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Tree</span>
-          {activeView === 'tree' && (
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-accent"
-              aria-hidden="true"
-            />
-          )}
         </Button>
 
         {/* Transform View Toggle */}
@@ -238,12 +226,6 @@ export function Toolbar({
         >
           <Wand2 className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Transform</span>
-          {activeView === 'transform' && (
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-accent"
-              aria-hidden="true"
-            />
-          )}
         </Button>
 
         {/* Convert View Toggle */}
@@ -270,12 +252,6 @@ export function Toolbar({
         >
           <ArrowRightLeft className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Convert</span>
-          {activeView === 'convert' && (
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-accent"
-              aria-hidden="true"
-            />
-          )}
         </Button>
 
         {/* Test / Developer View Toggle */}
@@ -302,12 +278,6 @@ export function Toolbar({
         >
           <TestTube className="h-3.5 w-3.5" />
           <span className="hidden md:inline">Test</span>
-          {activeView === 'testing' && (
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-accent"
-              aria-hidden="true"
-            />
-          )}
         </Button>
 
         <MoreMenu

@@ -36,7 +36,7 @@ export function Toast({
       role="status"
       aria-live="polite"
       className={cn(
-        'fixed bottom-8 right-6 z-50 flex items-center gap-2.5 rounded-lg border border-border bg-surface-elevated px-3.5 py-2 text-xs font-medium text-text-primary shadow-lg backdrop-blur transition-all duration-200 animate-in fade-in slide-in-from-bottom-2'
+        'fixed bottom-8 right-6 z-50 flex items-center gap-2.5 rounded-lg border border-border bg-surface-elevated px-3.5 py-2 text-xs font-medium text-text-primary shadow-lg backdrop-blur animate-toast-enter'
       )}
     >
       {icons[type]}

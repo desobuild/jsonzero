@@ -139,7 +139,7 @@ export function JsonPathQuery({
           size="sm"
           aria-label="Run JSONPath Query"
           onClick={() => onRunQuery()}
-          className="h-7 gap-1 px-3 text-xs font-semibold text-accent-dark"
+          className="h-7 gap-1 px-3 text-xs font-semibold text-accent-foreground"
         >
           <Play className="h-3 w-3 fill-current" />
           <span>Run</span>

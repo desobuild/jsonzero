@@ -38,13 +38,13 @@ export interface CodeEditorProps {
   textareaRef?: RefObject<HTMLTextAreaElement | null>
 }
 
-// Token color styles consistent with JSONZero dark/light design system
+// Token color styles — using theme-aware CSS custom properties
 const TOKEN_CLASS_MAP: Record<TokenType, string> = {
-  key: 'text-[#B4C5FF] font-medium',
-  string: 'text-[#68DBA9]',
-  number: 'text-[#F0C674]',
-  boolean: 'text-[#E06C75]',
-  null: 'text-[#E06C75]',
+  key: 'text-syntax-key font-medium',
+  string: 'text-syntax-string',
+  number: 'text-syntax-number',
+  boolean: 'text-syntax-boolean',
+  null: 'text-syntax-boolean',
   punctuation: 'text-text-muted',
   plain: 'text-text-primary',
 }
@@ -347,8 +347,8 @@ export function CodeEditor({
                           className={cn(
                             'rounded-xs px-0.5 py-0.2',
                             seg.isCurrentMatch
-                              ? 'bg-[#68DBA9] text-[#003825] font-semibold ring-1 ring-[#85F8C4]'
-                              : 'bg-[#68DBA9]/20 text-[#68DBA9] ring-1 ring-[#68DBA9]/40'
+                              ? 'bg-match-current-bg text-accent-foreground font-semibold ring-1 ring-match-ring'
+                              : 'bg-match-bg text-syntax-string ring-1 ring-match-ring'
                           )}
                         >
                           {seg.text}
@@ -418,7 +418,7 @@ export function CodeEditor({
       {/* Drag & Drop Overlay */}
       {isDragging && !readOnly && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-accent bg-background/90 p-4 text-center backdrop-blur-sm animate-in fade-in duration-150">
-          <UploadCloud className="h-10 w-10 text-accent animate-bounce" />
+          <UploadCloud className="h-10 w-10 text-accent" />
           <p className="text-sm font-semibold text-accent">
             Drop JSON file here
           </p>

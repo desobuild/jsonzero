@@ -209,19 +209,19 @@ export const JsonTreeNode = memo(function JsonTreeNode({
           )}
 
           {type === 'number' && (
-            <span className="font-mono text-xs text-[#38BDF8]">
+            <span className="font-mono text-xs text-syntax-number">
               <HighlightText text={String(value)} query={searchQuery} />
             </span>
           )}
 
           {type === 'boolean' && (
-            <span className="font-mono text-xs font-medium text-[#FBBF24]">
+            <span className="font-mono text-xs font-medium text-syntax-boolean">
               <HighlightText text={String(value)} query={searchQuery} />
             </span>
           )}
 
           {type === 'null' && (
-            <span className="font-mono text-xs italic text-[#A78BFA]">
+            <span className="font-mono text-xs italic text-syntax-null">
               <HighlightText text="null" query={searchQuery} />
             </span>
           )}

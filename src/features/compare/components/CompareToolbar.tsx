@@ -1,5 +1,6 @@
 import { ArrowLeftRight, FileJson, Trash2, WrapText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import type { CompareMobileTab } from '@/features/compare/types'
 
 export interface CompareToolbarProps {
@@ -76,11 +77,12 @@ export function CompareToolbar({
           onClick={onToggleWordWrap}
           aria-label="Toggle word wrap"
           title="Toggle word wrap"
-          className={`h-7 gap-1 transition-colors ${
+          className={cn(
+            'h-7 gap-1 transition-colors',
             wordWrap
               ? 'bg-accent/15 text-accent'
               : 'text-text-secondary hover:bg-surface-elevated hover:text-text-primary'
-          }`}
+          )}
         >
           <WrapText className="h-3 w-3" />
           <span className="hidden sm:inline">Wrap</span>
@@ -100,11 +102,12 @@ export function CompareToolbar({
           id="mobile-tab-json-a"
           data-testid="mobile-tab-json-a"
           onClick={() => onMobileTabChange('jsonA')}
-          className={`rounded px-2 py-1 text-3xs font-medium transition-colors ${
+          className={cn(
+            'rounded px-2 py-1 text-3xs font-medium transition-colors',
             activeMobileTab === 'jsonA'
-              ? 'bg-accent text-accent-dark font-semibold'
+              ? 'bg-accent text-accent-foreground font-semibold'
               : 'text-text-secondary hover:text-text-primary'
-          }`}
+          )}
         >
           JSON A
         </button>
@@ -115,11 +118,12 @@ export function CompareToolbar({
           id="mobile-tab-json-b"
           data-testid="mobile-tab-json-b"
           onClick={() => onMobileTabChange('jsonB')}
-          className={`rounded px-2 py-1 text-3xs font-medium transition-colors ${
+          className={cn(
+            'rounded px-2 py-1 text-3xs font-medium transition-colors',
             activeMobileTab === 'jsonB'
-              ? 'bg-accent text-accent-dark font-semibold'
+              ? 'bg-accent text-accent-foreground font-semibold'
               : 'text-text-secondary hover:text-text-primary'
-          }`}
+          )}
         >
           JSON B
         </button>
@@ -130,11 +134,12 @@ export function CompareToolbar({
           id="mobile-tab-diff"
           data-testid="mobile-tab-diff"
           onClick={() => onMobileTabChange('diff')}
-          className={`rounded px-2 py-1 text-3xs font-medium transition-colors ${
+          className={cn(
+            'rounded px-2 py-1 text-3xs font-medium transition-colors',
             activeMobileTab === 'diff'
-              ? 'bg-accent text-accent-dark font-semibold'
+              ? 'bg-accent text-accent-foreground font-semibold'
               : 'text-text-secondary hover:text-text-primary'
-          }`}
+          )}
         >
           Diff {changeCount > 0 ? `(${changeCount})` : ''}
         </button>

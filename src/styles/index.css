@@ -31,6 +31,23 @@
   --color-warning: var(--jz-warning);
   --color-error: var(--jz-error);
 
+  /* Semantic syntax colors — theme-aware via CSS custom properties */
+  --color-syntax-key: var(--jz-syntax-key);
+  --color-syntax-string: var(--jz-syntax-string);
+  --color-syntax-number: var(--jz-syntax-number);
+  --color-syntax-boolean: var(--jz-syntax-boolean);
+  --color-syntax-null: var(--jz-syntax-null);
+
+  /* Diff semantic colors */
+  --color-diff-added: var(--jz-diff-added);
+  --color-diff-removed: var(--jz-diff-removed);
+  --color-diff-changed: var(--jz-diff-changed);
+
+  /* Search match colors */
+  --color-match-bg: var(--jz-match-bg);
+  --color-match-current-bg: var(--jz-match-current-bg);
+  --color-match-ring: var(--jz-match-ring);
+
   /* Typography */
   --font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono:
@@ -58,6 +75,8 @@
   --radius-lg: 8px;
 
   /* Font sizes */
+  --text-3xs: 0.5625rem;
+  --text-3xs--line-height: 0.75rem;
   --text-2xs: 0.625rem;
   --text-2xs--line-height: 0.875rem;
 }
@@ -80,6 +99,23 @@
   --jz-warning: #f0c674;
   --jz-error: #e06c75;
 
+  /* Syntax highlighting */
+  --jz-syntax-key: #b4c5ff;
+  --jz-syntax-string: #68dba9;
+  --jz-syntax-number: #f0c674;
+  --jz-syntax-boolean: #e06c75;
+  --jz-syntax-null: #c4a7e7;
+
+  /* Diff */
+  --jz-diff-added: #68dba9;
+  --jz-diff-removed: #ff7b72;
+  --jz-diff-changed: #f0c674;
+
+  /* Search match */
+  --jz-match-bg: rgba(104, 219, 169, 0.2);
+  --jz-match-current-bg: #68dba9;
+  --jz-match-ring: rgba(104, 219, 169, 0.4);
+
   color-scheme: dark;
 }
 
@@ -100,6 +136,23 @@
   --jz-success: #0d9668;
   --jz-warning: #d97706;
   --jz-error: #dc2626;
+
+  /* Syntax highlighting — light-theme appropriate */
+  --jz-syntax-key: #2563eb;
+  --jz-syntax-string: #0d7c54;
+  --jz-syntax-number: #b45309;
+  --jz-syntax-boolean: #be123c;
+  --jz-syntax-null: #7c3aed;
+
+  /* Diff */
+  --jz-diff-added: #0d9668;
+  --jz-diff-removed: #dc2626;
+  --jz-diff-changed: #d97706;
+
+  /* Search match */
+  --jz-match-bg: rgba(13, 150, 104, 0.15);
+  --jz-match-current-bg: #0d9668;
+  --jz-match-ring: rgba(13, 150, 104, 0.35);
 
   color-scheme: light;
 }
@@ -182,4 +235,20 @@ samp {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Toast enter animation */
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-toast-enter {
+  animation: toast-enter 0.2s ease-out;
 }

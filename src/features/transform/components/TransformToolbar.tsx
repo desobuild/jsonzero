@@ -61,7 +61,7 @@ export const TransformToolbar: React.FC<TransformToolbarProps> = ({
           size="sm"
           disabled={!canApply}
           onClick={onApply}
-          className="h-8 gap-1.5 font-semibold text-accent-dark shadow-sm hover:opacity-95 disabled:opacity-50"
+          className="h-8 gap-1.5 font-semibold text-accent-foreground shadow-sm hover:opacity-95 disabled:opacity-50"
         >
           <Check className="h-3.5 w-3.5" />
           <span>Apply</span>

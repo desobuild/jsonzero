@@ -45,7 +45,7 @@ export const TransformOptions: React.FC<TransformOptionsProps> = ({
             variant="accent"
             data-testid="unescape-detected-btn"
             onClick={onUnescapeAndFormat}
-            className="h-6 px-2.5 text-3xs font-semibold text-accent-dark hover:opacity-90"
+            className="h-6 px-2.5 text-3xs font-semibold text-accent-foreground hover:opacity-90"
           >
             Unescape & Format
           </Button>

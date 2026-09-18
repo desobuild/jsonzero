@@ -18,26 +18,17 @@ export function PrivacyIndicator({ compact = false }: PrivacyIndicatorProps) {
   return (
     <div
       id="privacy-indicator"
-      className="flex flex-col items-center gap-1 py-2 text-center"
+      className="flex items-center justify-center gap-3 border-b border-border/60 bg-surface/50 px-3 py-1.5 text-center select-none"
     >
       <div className="flex items-center gap-1.5">
-        <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+        <ShieldCheck className="h-3.5 w-3.5 text-accent shrink-0" />
         <span className="text-xs font-medium text-text-secondary">
           Your JSON stays in your browser.
         </span>
       </div>
-      <p className="text-2xs text-text-muted">
+      <span className="hidden text-2xs text-text-muted sm:inline">
         No ads · No accounts · No selling data · 100% client-side
-      </p>
-      <div className="flex items-center gap-1.5">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-        </span>
-        <span className="text-2xs font-medium text-accent">
-          Zero Network Activity
-        </span>
-      </div>
+      </span>
     </div>
   )
 }

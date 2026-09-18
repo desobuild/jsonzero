@@ -47,7 +47,7 @@ describe('JSONZero Application', () => {
     expect(screen.getByText('Ready')).toBeInTheDocument()
   })
 
-  it('renders Transform button in toolbar and toggles Transform workbench', () => {
+  it('renders Transform button in toolbar and toggles Transform workbench', async () => {
     renderApp()
 
     const transformBtn = screen.getByRole('button', { name: 'Transform' })
@@ -55,14 +55,14 @@ describe('JSONZero Application', () => {
 
     // Click to open Transform
     fireEvent.click(transformBtn)
-    expect(screen.getByTestId('transform-workbench')).toBeInTheDocument()
+    expect(await screen.findByTestId('transform-workbench')).toBeInTheDocument()
 
     // Click again to toggle back to Editor
     fireEvent.click(transformBtn)
     expect(screen.queryByTestId('transform-workbench')).not.toBeInTheDocument()
   })
 
-  it('renders Convert button in toolbar and toggles Convert workbench', () => {
+  it('renders Convert button in toolbar and toggles Convert workbench', async () => {
     renderApp()
 
     const convertBtn = screen.getByRole('button', { name: 'Convert' })
@@ -70,14 +70,14 @@ describe('JSONZero Application', () => {
 
     // Click to open Convert
     fireEvent.click(convertBtn)
-    expect(screen.getByTestId('convert-workbench')).toBeInTheDocument()
+    expect(await screen.findByTestId('convert-workbench')).toBeInTheDocument()
 
     // Click again to toggle back to Editor
     fireEvent.click(convertBtn)
     expect(screen.queryByTestId('convert-workbench')).not.toBeInTheDocument()
   })
 
-  it('renders Test button in toolbar and toggles Testing workbench', () => {
+  it('renders Test button in toolbar and toggles Testing workbench', async () => {
     renderApp()
 
     const testBtn = screen.getByRole('button', {
@@ -87,7 +87,7 @@ describe('JSONZero Application', () => {
 
     // Click to open Testing workbench
     fireEvent.click(testBtn)
-    expect(screen.getByTestId('testing-workbench')).toBeInTheDocument()
+    expect(await screen.findByTestId('testing-workbench')).toBeInTheDocument()
 
     // Click again to toggle back to Editor
     fireEvent.click(testBtn)

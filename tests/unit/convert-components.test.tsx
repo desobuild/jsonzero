@@ -297,5 +297,46 @@ describe('Convert Feature Component Suite', () => {
       fireEvent.click(previewTab)
       expect(previewTab).toHaveClass('font-semibold')
     })
+
+    it('paginates large tables to prevent DOM explosion while preserving full copy', async () => {
+      const rows = Array.from({ length: 75 }, (_, i) => ({
+        id: i + 1,
+        title: `Item ${i + 1}`,
+      }))
+      const onToast = vi.fn()
+      render(
+        <ConvertWorkbench
+          initialInput={JSON.stringify(rows)}
+          onToast={onToast}
+        />
+      )
+
+      // Shows row 1 to 50
+      expect(await screen.findByText(/Rows 1–50 of 75/i)).toBeInTheDocument()
+      expect(screen.getByTestId('table-cell-0-title')).toHaveTextContent(
+        'Item 1'
+      )
+
+      // Next page button
+      const nextBtn = screen.getByRole('button', { name: 'Next Page' })
+      fireEvent.click(nextBtn)
+
+      // Shows row 51 to 75
+      expect(await screen.findByText(/Rows 51–75 of 75/i)).toBeInTheDocument()
+      expect(screen.getByTestId('table-cell-50-title')).toHaveTextContent(
+        'Item 51'
+      )
+
+      // Copy table copies all 75 rows (not just visible 25)
+      const copyTableBtn = screen.getByTestId('copy-table-btn')
+      fireEvent.click(copyTableBtn)
+      await waitFor(() => {
+        expect(navigator.clipboard.writeText).toHaveBeenCalled()
+        const copiedText = vi.mocked(navigator.clipboard.writeText).mock
+          .calls[0][0]
+        expect(copiedText).toContain('Item 1')
+        expect(copiedText).toContain('Item 75')
+      })
+    })
   })
 })

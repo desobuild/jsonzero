@@ -20,15 +20,18 @@ export interface FormatterState {
   processingTimeMs: number | null
   inputStats: JsonStats
   outputStats: JsonStats
+  isProcessing: boolean
+  processingMessage: string | null
 }
 
 export interface FormatterActions {
   setInput: (value: string) => void
   setIndent: (indent: IndentOption) => void
-  format: () => void
-  minify: () => void
-  validate: () => void
+  format: () => Promise<void> | void
+  minify: () => Promise<void> | void
+  validate: () => Promise<void> | void
   clear: () => void
+  cancelOperation: () => void
   loadFile: (file: File) => Promise<boolean>
   loadText: (text: string) => void
 }

@@ -104,7 +104,10 @@ export function Inspector({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden bg-background">
+    <div
+      data-testid="inspector-workbench"
+      className="flex flex-1 flex-col overflow-hidden bg-background"
+    >
       {/* Mobile Tab Switcher */}
       <div className="flex border-b border-border bg-surface md:hidden">
         <button

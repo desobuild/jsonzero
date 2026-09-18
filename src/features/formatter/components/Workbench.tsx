@@ -1,5 +1,13 @@
 import { useRef, useState, useCallback } from 'react'
-import { Upload, Trash2, Copy, Check, Download, WrapText } from 'lucide-react'
+import {
+  Upload,
+  Trash2,
+  Copy,
+  Check,
+  Download,
+  WrapText,
+  Loader2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Toast, type ToastType } from '@/components/ui/toast'
 import { ErrorDisplay } from '@/components/shared/ErrorDisplay'
@@ -127,7 +135,30 @@ export function Workbench({
   )
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden bg-background">
+    <div className="relative flex flex-1 flex-col overflow-hidden bg-background">
+      {/* Active Worker Processing Overlay */}
+      {formatter.isProcessing && (
+        <div
+          role="status"
+          aria-live="polite"
+          data-testid="worker-processing-overlay"
+          className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-background/85 backdrop-blur-xs"
+        >
+          <div className="flex items-center gap-2.5 font-mono text-sm font-medium text-text-primary">
+            <Loader2 className="h-4 w-4 animate-spin text-accent" />
+            <span>{formatter.processingMessage || 'Processing...'}</span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={formatter.cancelOperation}
+            className="h-7 border-border bg-surface-elevated px-3 text-xs text-text-secondary hover:text-error transition-colors"
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
+
       {/* Mobile Tab Switcher */}
       <div className="flex border-b border-border bg-surface md:hidden">
         <button

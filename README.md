@@ -16,9 +16,20 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 7 — Developer & Testing Tools** complete.
+> **Phase 8 — Large JSON Performance, Scalability & Bundle Optimization** complete.
 >
-> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, and Developer & Testing Tools are active.
+> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, Developer & Testing Tools, Web Worker processing, and bundle code splitting are active.
+
+### Performance & Scalability (Phase 8)
+
+- **30.3% Initial Bundle Reduction**: Initial JS bundle reduced from ~595 kB to ~415 kB via dynamic route-level code splitting (`React.lazy` and `Suspense`), deferring heavy workbenches until requested.
+- **Dedicated Web Worker Offloading**: CPU-intensive parsing, formatting, minification, diffing, and transformations on documents >= 100 KB run off the main thread in native Web Workers, keeping the UI responsive.
+- **Instant Small-Document Processing**: Payloads < 100 KB process synchronously on the main thread, avoiding thread serialization overhead.
+- **Worker Cancellation & Error Recovery**: Long operations can be cancelled at any time with worker termination and fresh instance recycling; error boundaries prevent application crashes.
+- **High-Performance Editor Mode**: Documents exceeding 150 KB or 2,500 lines bypass expensive full-DOM syntax highlighting for instantaneous typing and scrolling, paired with windowed line number rendering.
+- **Tree View & Table Windowing**: Large arrays and tables are rendered with windowed pagination (50 items/page) to prevent DOM node explosions, while preserving complete, un-truncated TSV and CSV exports.
+- **Performance Documentation**: See [docs/performance.md](./docs/performance.md) for full benchmarks, worker protocol, and architecture details.
+
 
 ### Features
 

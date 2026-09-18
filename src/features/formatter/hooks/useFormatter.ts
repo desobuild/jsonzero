@@ -13,6 +13,10 @@ import type {
   FormatMode,
   FormatterError,
 } from '@/features/formatter/types'
+import {
+  workerClient,
+  DEFAULT_WORKER_THRESHOLD_BYTES,
+} from '@/workers/workerClient'
 
 export const DEFAULT_SAMPLE_JSON = JSON.stringify(
   {
@@ -54,10 +58,20 @@ export function useFormatter(
     useState<ValidationState>('idle')
   const [error, setError] = useState<FormatterError | null>(null)
   const [processingTimeMs, setProcessingTimeMs] = useState<number | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [processingMessage, setProcessingMessage] = useState<string | null>(
+    null
+  )
 
   // Compute metrics in real-time
   const inputStats = useMemo(() => computeJsonStats(input), [input])
   const outputStats = useMemo(() => computeJsonStats(output), [output])
+
+  const cancelOperation = useCallback(() => {
+    workerClient.cancelCurrentOperation()
+    setIsProcessing(false)
+    setProcessingMessage(null)
+  }, [])
 
   const setInput = useCallback((value: string) => {
     setInputState(value)
@@ -66,15 +80,63 @@ export function useFormatter(
     setValidationState((prev) => (prev === 'invalid' ? 'idle' : prev))
   }, [])
 
-  const format = useCallback(() => {
+  const format = useCallback(async () => {
     const startTime = performance.now()
+    setLastOperation('format')
+
+    if (
+      input.length >= DEFAULT_WORKER_THRESHOLD_BYTES &&
+      workerClient.isWorkerSupported()
+    ) {
+      setIsProcessing(true)
+      setProcessingMessage('Formatting large JSON...')
+      try {
+        const result = await workerClient.execute(
+          'format',
+          { json: input, indent },
+          { forceWorker: true }
+        )
+        const elapsed = Math.max(
+          0.1,
+          Number((performance.now() - startTime).toFixed(1))
+        )
+        setProcessingTimeMs(elapsed)
+
+        if (result.success && result.formatted !== undefined) {
+          setOutput(result.formatted)
+          setValidationState('valid')
+          setError(null)
+        } else {
+          setValidationState('invalid')
+          setError({
+            message: result.error ?? 'Invalid JSON syntax',
+            line: result.errorLine,
+            column: result.errorColumn,
+            snippet: result.snippet,
+          })
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.message.includes('cancelled')) {
+          return
+        }
+        setValidationState('invalid')
+        setError({
+          message:
+            err instanceof Error ? err.message : 'Formatting failed in worker',
+        })
+      } finally {
+        setIsProcessing(false)
+        setProcessingMessage(null)
+      }
+      return
+    }
+
     const result = formatJSON(input, indent)
     const elapsed = Math.max(
       0.1,
       Number((performance.now() - startTime).toFixed(1))
     )
     setProcessingTimeMs(elapsed)
-    setLastOperation('format')
 
     if (result.success && result.formatted !== undefined) {
       setOutput(result.formatted)
@@ -91,15 +153,65 @@ export function useFormatter(
     }
   }, [input, indent])
 
-  const minify = useCallback(() => {
+  const minify = useCallback(async () => {
     const startTime = performance.now()
+    setLastOperation('minify')
+
+    if (
+      input.length >= DEFAULT_WORKER_THRESHOLD_BYTES &&
+      workerClient.isWorkerSupported()
+    ) {
+      setIsProcessing(true)
+      setProcessingMessage('Minifying large JSON...')
+      try {
+        const result = await workerClient.execute(
+          'minify',
+          { json: input },
+          { forceWorker: true }
+        )
+        const elapsed = Math.max(
+          0.1,
+          Number((performance.now() - startTime).toFixed(1))
+        )
+        setProcessingTimeMs(elapsed)
+
+        if (result.success && result.minified !== undefined) {
+          setOutput(result.minified)
+          setValidationState('valid')
+          setError(null)
+        } else {
+          setValidationState('invalid')
+          setError({
+            message: result.error ?? 'Invalid JSON syntax',
+            line: result.errorLine,
+            column: result.errorColumn,
+            snippet: result.snippet,
+          })
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.message.includes('cancelled')) {
+          return
+        }
+        setValidationState('invalid')
+        setError({
+          message:
+            err instanceof Error
+              ? err.message
+              : 'Minification failed in worker',
+        })
+      } finally {
+        setIsProcessing(false)
+        setProcessingMessage(null)
+      }
+      return
+    }
+
     const result = minifyJSON(input)
     const elapsed = Math.max(
       0.1,
       Number((performance.now() - startTime).toFixed(1))
     )
     setProcessingTimeMs(elapsed)
-    setLastOperation('minify')
 
     if (result.success && result.minified !== undefined) {
       setOutput(result.minified)
@@ -116,15 +228,63 @@ export function useFormatter(
     }
   }, [input])
 
-  const validate = useCallback(() => {
+  const validate = useCallback(async () => {
     const startTime = performance.now()
+    setLastOperation('validate')
+
+    if (
+      input.length >= DEFAULT_WORKER_THRESHOLD_BYTES &&
+      workerClient.isWorkerSupported()
+    ) {
+      setIsProcessing(true)
+      setProcessingMessage('Validating large JSON...')
+      try {
+        const result = await workerClient.execute(
+          'validate',
+          { json: input },
+          { forceWorker: true }
+        )
+        const elapsed = Math.max(
+          0.1,
+          Number((performance.now() - startTime).toFixed(1))
+        )
+        setProcessingTimeMs(elapsed)
+
+        if (result.valid) {
+          setValidationState('valid')
+          setError(null)
+        } else {
+          setValidationState('invalid')
+          const firstErr = result.errors[0]
+          setError({
+            message: firstErr?.message ?? 'Invalid JSON syntax',
+            line: firstErr?.line,
+            column: firstErr?.column,
+            snippet: firstErr?.snippet,
+          })
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.message.includes('cancelled')) {
+          return
+        }
+        setValidationState('invalid')
+        setError({
+          message:
+            err instanceof Error ? err.message : 'Validation failed in worker',
+        })
+      } finally {
+        setIsProcessing(false)
+        setProcessingMessage(null)
+      }
+      return
+    }
+
     const result = validateJSON(input)
     const elapsed = Math.max(
       0.1,
       Number((performance.now() - startTime).toFixed(1))
     )
     setProcessingTimeMs(elapsed)
-    setLastOperation('validate')
 
     if (result.valid) {
       setValidationState('valid')
@@ -142,13 +302,14 @@ export function useFormatter(
   }, [input])
 
   const clear = useCallback(() => {
+    cancelOperation()
     setInputState('')
     setOutput('')
     setValidationState('idle')
     setError(null)
     setLastOperation(null)
     setProcessingTimeMs(null)
-  }, [])
+  }, [cancelOperation])
 
   const setIndent = useCallback(
     (newIndent: IndentOption) => {
@@ -207,12 +368,15 @@ export function useFormatter(
     processingTimeMs,
     inputStats,
     outputStats,
+    isProcessing,
+    processingMessage,
     setInput,
     setIndent,
     format,
     minify,
     validate,
     clear,
+    cancelOperation,
     loadFile,
     loadText,
   }

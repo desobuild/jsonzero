@@ -165,4 +165,24 @@ describe('Inspector Component Suite', () => {
     fireEvent.click(returnBtn)
     expect(onSwitch).toHaveBeenCalled()
   })
+
+  it('handles large arrays safely with windowed pagination controls', () => {
+    const largeArray = Array.from({ length: 120 }, (_, i) => ({
+      id: i + 1,
+      name: `Item ${i + 1}`,
+    }))
+    render(<Inspector input={JSON.stringify(largeArray)} />)
+
+    // Verify root array shows item count badge
+    expect(screen.getByText('120 items')).toBeDefined()
+
+    // Verify pagination indicator is visible when expanded
+    expect(screen.getByText(/Showing 1–50 of 120 items/i)).toBeDefined()
+    const showNextBtn = screen.getByRole('button', { name: /Show next 50/i })
+    expect(showNextBtn).toBeDefined()
+
+    // Click show next
+    fireEvent.click(showNextBtn)
+    expect(screen.getByText(/Showing 1–100 of 120 items/i)).toBeDefined()
+  })
 })

@@ -5,12 +5,14 @@
  * Features horizontal scrolling, copy cell value, copy row, copy entire table, and empty state.
  */
 
-import React, { useState } from 'react'
-import { Copy, Check } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { TableData, TableRow } from '@/lib/json/table'
 import { tableToTsv } from '@/lib/json/table'
+
+export const TABLE_PAGE_SIZE = 50
 
 export interface ConvertTableProps {
   tableData: TableData | null
@@ -23,6 +25,12 @@ export const ConvertTable: React.FC<ConvertTableProps> = ({
 }) => {
   const [copiedCellKey, setCopiedCellKey] = useState<string | null>(null)
   const [copiedRowId, setCopiedRowId] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Reset page when dataset changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [tableData])
 
   if (
     !tableData ||
@@ -83,6 +91,12 @@ export const ConvertTable: React.FC<ConvertTableProps> = ({
     }
   }
 
+  const totalRows = tableData.rows.length
+  const totalPages = Math.max(1, Math.ceil(totalRows / TABLE_PAGE_SIZE))
+  const startIndex = (currentPage - 1) * TABLE_PAGE_SIZE
+  const endIndex = Math.min(totalRows, startIndex + TABLE_PAGE_SIZE)
+  const visibleRows = tableData.rows.slice(startIndex, endIndex)
+
   return (
     <div
       id="convert-table-container"
@@ -91,12 +105,47 @@ export const ConvertTable: React.FC<ConvertTableProps> = ({
     >
       {/* Table Subheader / Quick Actions */}
       <div className="flex h-8 items-center justify-between border-b border-border bg-surface px-3 py-1">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <span className="text-3xs font-medium text-text-muted">
             {tableData.totalRows} {tableData.totalRows === 1 ? 'row' : 'rows'} ×{' '}
             {tableData.columns.length}{' '}
             {tableData.columns.length === 1 ? 'column' : 'columns'}
           </span>
+
+          {totalRows > TABLE_PAGE_SIZE && (
+            <div className="flex items-center gap-1.5 border-l border-border pl-3 text-3xs text-text-muted">
+              <span>
+                Rows {startIndex + 1}–{endIndex} of {totalRows}
+              </span>
+              <div className="flex items-center gap-0.5">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  aria-label="Previous Page"
+                  className="h-5 w-5 p-0 text-text-secondary hover:text-text-primary disabled:opacity-30"
+                >
+                  <ChevronLeft className="h-3 w-3" />
+                </Button>
+                <span className="px-1 text-3xs font-mono font-medium text-text-primary">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={currentPage >= totalPages}
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  aria-label="Next Page"
+                  className="h-5 w-5 p-0 text-text-secondary hover:text-text-primary disabled:opacity-30"
+                >
+                  <ChevronRight className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <Button
@@ -147,70 +196,73 @@ export const ConvertTable: React.FC<ConvertTableProps> = ({
           </thead>
 
           <tbody className="divide-y divide-border">
-            {tableData.rows.map((row, rowIdx) => (
-              <tr
-                key={row.id}
-                data-testid={`table-row-${rowIdx}`}
-                className="group transition-colors hover:bg-surface-elevated/50"
-              >
-                {/* Row Number */}
-                <td className="select-none border-r border-border px-2 py-1.5 text-center text-3xs text-text-muted">
-                  {rowIdx + 1}
-                </td>
+            {visibleRows.map((row, localIdx) => {
+              const rowIdx = startIndex + localIdx
+              return (
+                <tr
+                  key={row.id}
+                  data-testid={`table-row-${rowIdx}`}
+                  className="group transition-colors hover:bg-surface-elevated/50"
+                >
+                  {/* Row Number */}
+                  <td className="select-none border-r border-border px-2 py-1.5 text-center text-3xs text-text-muted">
+                    {rowIdx + 1}
+                  </td>
 
-                {/* Cells */}
-                {tableData.columns.map((col) => {
-                  const cellVal = row.cells[col.id] ?? '—'
-                  const cellKey = `${rowIdx}-${col.id}`
-                  const isCopied = copiedCellKey === cellKey
-                  const isMissing = cellVal === '—'
+                  {/* Cells */}
+                  {tableData.columns.map((col) => {
+                    const cellVal = row.cells[col.id] ?? '—'
+                    const cellKey = `${rowIdx}-${col.id}`
+                    const isCopied = copiedCellKey === cellKey
+                    const isMissing = cellVal === '—'
 
-                  return (
-                    <td
-                      key={col.id}
-                      data-testid={`table-cell-${rowIdx}-${col.id}`}
-                      onClick={() => handleCopyCell(rowIdx, col.id, cellVal)}
-                      title="Click to copy cell value"
-                      className={cn(
-                        'cursor-pointer border-r border-border px-3 py-1.5 transition-colors max-w-xs truncate select-text',
-                        isMissing
-                          ? 'text-text-muted font-normal'
-                          : 'text-text-primary',
-                        isCopied
-                          ? 'bg-accent/20 text-accent font-semibold'
-                          : 'hover:bg-accent/10'
-                      )}
-                    >
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="truncate">{cellVal}</span>
-                        {isCopied && (
-                          <Check className="h-3 w-3 text-accent shrink-0" />
+                    return (
+                      <td
+                        key={col.id}
+                        data-testid={`table-cell-${rowIdx}-${col.id}`}
+                        onClick={() => handleCopyCell(rowIdx, col.id, cellVal)}
+                        title="Click to copy cell value"
+                        className={cn(
+                          'cursor-pointer border-r border-border px-3 py-1.5 transition-colors max-w-xs truncate select-text',
+                          isMissing
+                            ? 'text-text-muted font-normal'
+                            : 'text-text-primary',
+                          isCopied
+                            ? 'bg-accent/20 text-accent font-semibold'
+                            : 'hover:bg-accent/10'
                         )}
-                      </div>
-                    </td>
-                  )
-                })}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="truncate">{cellVal}</span>
+                          {isCopied && (
+                            <Check className="h-3 w-3 text-accent shrink-0" />
+                          )}
+                        </div>
+                      </td>
+                    )
+                  })}
 
-                {/* Row Action: Copy Row */}
-                <td className="px-2 py-1.5 text-center">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleCopyRow(row)}
-                    data-testid={`copy-row-btn-${rowIdx}`}
-                    aria-label={`Copy row ${rowIdx + 1}`}
-                    title="Copy row data"
-                    className="h-5 w-5 p-0 text-text-muted hover:text-text-primary"
-                  >
-                    {copiedRowId === row.id ? (
-                      <Check className="h-3 w-3 text-accent" />
-                    ) : (
-                      <Copy className="h-3 w-3" />
-                    )}
-                  </Button>
-                </td>
-              </tr>
-            ))}
+                  {/* Row Action: Copy Row */}
+                  <td className="px-2 py-1.5 text-center">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleCopyRow(row)}
+                      data-testid={`copy-row-btn-${rowIdx}`}
+                      aria-label={`Copy row ${rowIdx + 1}`}
+                      title="Copy row data"
+                      className="h-5 w-5 p-0 text-text-muted hover:text-text-primary"
+                    >
+                      {copiedRowId === row.id ? (
+                        <Check className="h-3 w-3 text-accent" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </Button>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

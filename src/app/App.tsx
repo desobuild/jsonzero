@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, lazy, Suspense } from 'react'
 import { Header } from '@/components/shared/Header'
 import { PrivacyIndicator } from '@/components/shared/PrivacyIndicator'
 import { Toolbar } from '@/components/shared/Toolbar'
@@ -6,11 +6,47 @@ import { StatusBar } from '@/components/shared/StatusBar'
 import { Toast, type ToastType } from '@/components/ui/toast'
 import { Workbench, useFormatter } from '@/features/formatter'
 import { useSearch } from '@/features/search'
-import { Inspector } from '@/features/inspector'
-import { CompareWorkbench } from '@/features/compare'
-import { TransformWorkbench, type TransformType } from '@/features/transform'
-import { ConvertWorkbench, type ConvertType } from '@/features/convert'
-import { TestingWorkbench, type TestingType } from '@/features/testing'
+import { Loader2 } from 'lucide-react'
+import type { TransformType } from '@/features/transform'
+import type { ConvertType } from '@/features/convert'
+import type { TestingType } from '@/features/testing'
+
+// Lazy-loaded feature workbenches to optimize initial JS bundle
+const Inspector = lazy(() =>
+  import('@/features/inspector').then((m) => ({ default: m.Inspector }))
+)
+const CompareWorkbench = lazy(() =>
+  import('@/features/compare').then((m) => ({ default: m.CompareWorkbench }))
+)
+const TransformWorkbench = lazy(() =>
+  import('@/features/transform').then((m) => ({
+    default: m.TransformWorkbench,
+  }))
+)
+const ConvertWorkbench = lazy(() =>
+  import('@/features/convert').then((m) => ({ default: m.ConvertWorkbench }))
+)
+const TestingWorkbench = lazy(() =>
+  import('@/features/testing').then((m) => ({ default: m.TestingWorkbench }))
+)
+
+function WorkbenchLoadingFallback({ label }: { label: string }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex flex-1 flex-col items-center justify-center gap-3 bg-background p-8 font-mono text-sm text-text-muted"
+    >
+      <div className="flex items-center gap-2 font-medium text-text-secondary">
+        <Loader2 className="h-4 w-4 animate-spin text-accent" />
+        <span>Loading {label}...</span>
+      </div>
+      <p className="text-3xs text-text-muted">
+        Preparing client-side workbench module
+      </p>
+    </div>
+  )
+}
 
 export function App() {
   const formatter = useFormatter()
@@ -150,37 +186,57 @@ export function App() {
             inputTextareaRef={inputTextareaRef}
           />
         ) : activeView === 'tree' ? (
-          <Inspector
-            input={formatter.input}
-            onToast={showToast}
-            onSwitchToEditor={() => setActiveView('editor')}
-          />
+          <Suspense
+            fallback={<WorkbenchLoadingFallback label="Tree Inspector" />}
+          >
+            <Inspector
+              input={formatter.input}
+              onToast={showToast}
+              onSwitchToEditor={() => setActiveView('editor')}
+            />
+          </Suspense>
         ) : activeView === 'diff' ? (
-          <CompareWorkbench
-            initialJsonA={formatter.input || undefined}
-            onToast={showToast}
-          />
+          <Suspense
+            fallback={<WorkbenchLoadingFallback label="Structural Diff" />}
+          >
+            <CompareWorkbench
+              initialJsonA={formatter.input || undefined}
+              onToast={showToast}
+            />
+          </Suspense>
         ) : activeView === 'transform' ? (
-          <TransformWorkbench
-            initialInput={formatter.input}
-            initialTransform={selectedTransformTool}
-            onApply={(newContent) => {
-              formatter.setInput(newContent)
-            }}
-            onToast={showToast}
-          />
+          <Suspense
+            fallback={<WorkbenchLoadingFallback label="Transform Tools" />}
+          >
+            <TransformWorkbench
+              initialInput={formatter.input}
+              initialTransform={selectedTransformTool}
+              onApply={(newContent) => {
+                formatter.setInput(newContent)
+              }}
+              onToast={showToast}
+            />
+          </Suspense>
         ) : activeView === 'convert' ? (
-          <ConvertWorkbench
-            initialInput={formatter.input}
-            initialConvert={selectedConvertTool}
-            onToast={showToast}
-          />
+          <Suspense
+            fallback={<WorkbenchLoadingFallback label="Convert Tools" />}
+          >
+            <ConvertWorkbench
+              initialInput={formatter.input}
+              initialConvert={selectedConvertTool}
+              onToast={showToast}
+            />
+          </Suspense>
         ) : (
-          <TestingWorkbench
-            initialInput={formatter.input}
-            initialTool={selectedTestingTool}
-            onToast={showToast}
-          />
+          <Suspense
+            fallback={<WorkbenchLoadingFallback label="Testing Tools" />}
+          >
+            <TestingWorkbench
+              initialInput={formatter.input}
+              initialTool={selectedTestingTool}
+              onToast={showToast}
+            />
+          </Suspense>
         )}
       </main>
 

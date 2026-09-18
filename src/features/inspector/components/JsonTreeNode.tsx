@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 import { ChevronRight, Copy, Key, Route } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getValueType } from '@/features/inspector/utils'
@@ -56,6 +56,8 @@ function HighlightText({ text, query }: { text: string; query: string }) {
   return <>{parts}</>
 }
 
+export const TREE_NODE_PAGE_SIZE = 50
+
 export const JsonTreeNode = memo(function JsonTreeNode({
   nodeKey,
   value,
@@ -81,6 +83,22 @@ export const JsonTreeNode = memo(function JsonTreeNode({
   } else if (isObject && value !== null) {
     childCount = Object.keys(value as Record<string, unknown>).length
   }
+
+  const [renderedLimit, setRenderedLimit] = useState(TREE_NODE_PAGE_SIZE)
+
+  // Ensure active search match is within rendered bounds if matching a descendant item
+  useEffect(() => {
+    if (activeMatchPath && activeMatchPath.startsWith(path)) {
+      const rest = activeMatchPath.slice(path.length)
+      const match = rest.match(/^\[(\d+)\]/)
+      if (match) {
+        const idx = parseInt(match[1], 10)
+        if (idx >= renderedLimit) {
+          setRenderedLimit((prev) => Math.max(prev, idx + 20))
+        }
+      }
+    }
+  }, [activeMatchPath, path, renderedLimit])
 
   const isCurrentMatch = activeMatchPath === path
   const isArrayItem = typeof nodeKey === 'number'
@@ -252,7 +270,7 @@ export const JsonTreeNode = memo(function JsonTreeNode({
       {isExpandable && isExpanded && (
         <div role="group" className="flex flex-col">
           {isArray &&
-            (value as unknown[]).map((item, index) => {
+            (value as unknown[]).slice(0, renderedLimit).map((item, index) => {
               const childPath = `${path}[${index}]`
               return (
                 <JsonTreeNode
@@ -274,27 +292,61 @@ export const JsonTreeNode = memo(function JsonTreeNode({
             })}
 
           {isObject &&
-            Object.keys(value as Record<string, unknown>).map((k) => {
-              const childPath = appendJsonPath(path, k)
-              const childVal = (value as Record<string, unknown>)[k]
-              return (
-                <JsonTreeNode
-                  key={k}
-                  nodeKey={k}
-                  value={childVal}
-                  path={childPath}
-                  depth={depth + 1}
-                  isExpanded={expandedPaths.has(childPath)}
-                  expandedPaths={expandedPaths}
-                  onToggleExpand={onToggleExpand}
-                  onCopyKey={onCopyKey}
-                  onCopyValue={onCopyValue}
-                  onCopyPath={onCopyPath}
-                  searchQuery={searchQuery}
-                  activeMatchPath={activeMatchPath}
-                />
-              )
-            })}
+            Object.keys(value as Record<string, unknown>)
+              .slice(0, renderedLimit)
+              .map((k) => {
+                const childPath = appendJsonPath(path, k)
+                const childVal = (value as Record<string, unknown>)[k]
+                return (
+                  <JsonTreeNode
+                    key={k}
+                    nodeKey={k}
+                    value={childVal}
+                    path={childPath}
+                    depth={depth + 1}
+                    isExpanded={expandedPaths.has(childPath)}
+                    expandedPaths={expandedPaths}
+                    onToggleExpand={onToggleExpand}
+                    onCopyKey={onCopyKey}
+                    onCopyValue={onCopyValue}
+                    onCopyPath={onCopyPath}
+                    searchQuery={searchQuery}
+                    activeMatchPath={activeMatchPath}
+                  />
+                )
+              })}
+
+          {/* Large collection pagination / show more controls */}
+          {childCount > renderedLimit && (
+            <div
+              className="flex items-center gap-2 py-1.5 text-3xs text-text-muted select-none"
+              style={{ paddingLeft: `${(depth + 1) * 18 + 6}px` }}
+            >
+              <span>
+                Showing 1–{renderedLimit} of {childCount}{' '}
+                {isArray ? 'items' : 'keys'}
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  setRenderedLimit((prev) =>
+                    Math.min(childCount, prev + TREE_NODE_PAGE_SIZE)
+                  )
+                }
+                className="rounded border border-border bg-surface px-2 py-0.5 font-medium text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition-colors"
+              >
+                Show next{' '}
+                {Math.min(TREE_NODE_PAGE_SIZE, childCount - renderedLimit)}
+              </button>
+              <button
+                type="button"
+                onClick={() => setRenderedLimit(childCount)}
+                className="rounded border border-border bg-surface px-2 py-0.5 font-medium text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition-colors"
+              >
+                Show all ({childCount})
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

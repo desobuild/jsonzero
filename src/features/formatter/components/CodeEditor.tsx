@@ -49,6 +49,11 @@ const TOKEN_CLASS_MAP: Record<TokenType, string> = {
   plain: 'text-text-primary',
 }
 
+export const MAX_HIGHLIGHT_BYTES = 150 * 1024 // 150 KB
+export const MAX_HIGHLIGHT_LINES = 2500
+export const VIRTUALIZE_GUTTER_LINE_THRESHOLD = 1000
+const LINE_HEIGHT = 24
+
 export function CodeEditor({
   id,
   label,
@@ -69,6 +74,8 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [currentLine, setCurrentLine] = useState(1)
+  const [scrollTop, setScrollTop] = useState(0)
+  const [viewportHeight, setViewportHeight] = useState(600)
   const internalTextareaRef = useRef<HTMLTextAreaElement>(null)
   const textareaRef = externalTextareaRef || internalTextareaRef
   const gutterRef = useRef<HTMLDivElement>(null)
@@ -78,13 +85,25 @@ export function CodeEditor({
   const lines = value.split('\n')
   const lineCount = Math.max(1, lines.length)
 
-  // Tokenize document and build match segments
-  const tokens = useMemo(() => tokenizeJson(value), [value])
-  const segments = useMemo(
-    () =>
-      buildHighlightSegments(value, tokens, searchMatches, currentMatchIndex),
-    [value, tokens, searchMatches, currentMatchIndex]
-  )
+  // Check if document exceeds threshold for expensive DOM highlighting
+  const isLargeDocument =
+    value.length > MAX_HIGHLIGHT_BYTES || lineCount > MAX_HIGHLIGHT_LINES
+
+  // Tokenize document and build match segments (bypassed in large document mode)
+  const tokens = useMemo(() => {
+    if (isLargeDocument) return []
+    return tokenizeJson(value)
+  }, [value, isLargeDocument])
+
+  const segments = useMemo(() => {
+    if (isLargeDocument) return []
+    return buildHighlightSegments(
+      value,
+      tokens,
+      searchMatches,
+      currentMatchIndex
+    )
+  }, [value, tokens, searchMatches, currentMatchIndex, isLargeDocument])
 
   // Update current line number from cursor position
   const updateCursorLine = useCallback(() => {
@@ -107,6 +126,10 @@ export function CodeEditor({
   const handleScroll = useCallback((e: UIEvent<HTMLTextAreaElement>) => {
     const top = e.currentTarget.scrollTop
     const left = e.currentTarget.scrollLeft
+    const height = e.currentTarget.clientHeight
+
+    setScrollTop(top)
+    if (height > 0) setViewportHeight(height)
 
     if (gutterRef.current) {
       gutterRef.current.scrollTop = top
@@ -217,6 +240,25 @@ export function CodeEditor({
 
   const showEmptyState = readOnly && !value && emptyMessage
 
+  // Virtualized gutter calculation when line count exceeds threshold
+  const shouldVirtualizeGutter = lineCount > VIRTUALIZE_GUTTER_LINE_THRESHOLD
+  const visibleStartLine = shouldVirtualizeGutter
+    ? Math.max(1, Math.floor(scrollTop / LINE_HEIGHT) - 5)
+    : 1
+  const visibleLineCount = shouldVirtualizeGutter
+    ? Math.ceil(viewportHeight / LINE_HEIGHT) + 15
+    : lineCount
+  const visibleEndLine = shouldVirtualizeGutter
+    ? Math.min(lineCount, visibleStartLine + visibleLineCount)
+    : lineCount
+
+  const gutterTopPadding = shouldVirtualizeGutter
+    ? (visibleStartLine - 1) * LINE_HEIGHT
+    : 0
+  const gutterBottomPadding = shouldVirtualizeGutter
+    ? (lineCount - visibleEndLine) * LINE_HEIGHT
+    : 0
+
   return (
     <div
       onDragOver={handleDragOver}
@@ -234,24 +276,36 @@ export function CodeEditor({
         aria-hidden="true"
         className="flex w-11 shrink-0 select-none flex-col overflow-hidden border-r border-border bg-surface/40 py-2.5 pr-2.5 text-right font-mono text-xs leading-6 text-text-dim"
       >
-        {Array.from({ length: lineCount }, (_, i) => {
-          const lineNum = i + 1
-          const isErrorOnLine = errorLine === lineNum
-          const isCurrentLine = !readOnly && currentLine === lineNum
+        {gutterTopPadding > 0 && (
+          <div style={{ height: `${gutterTopPadding}px` }} aria-hidden="true" />
+        )}
+        {Array.from(
+          { length: visibleEndLine - visibleStartLine + 1 },
+          (_, i) => {
+            const lineNum = visibleStartLine + i
+            const isErrorOnLine = errorLine === lineNum
+            const isCurrentLine = !readOnly && currentLine === lineNum
 
-          return (
-            <span
-              key={lineNum}
-              className={cn(
-                'tabular-nums transition-colors',
-                isErrorOnLine && 'font-bold text-error',
-                isCurrentLine && !isErrorOnLine && 'font-semibold text-accent'
-              )}
-            >
-              {lineNum}
-            </span>
-          )
-        })}
+            return (
+              <span
+                key={lineNum}
+                className={cn(
+                  'tabular-nums transition-colors',
+                  isErrorOnLine && 'font-bold text-error',
+                  isCurrentLine && !isErrorOnLine && 'font-semibold text-accent'
+                )}
+              >
+                {lineNum}
+              </span>
+            )
+          }
+        )}
+        {gutterBottomPadding > 0 && (
+          <div
+            style={{ height: `${gutterBottomPadding}px` }}
+            aria-hidden="true"
+          />
+        )}
       </div>
 
       {/* Editor Area: Backdrop Layer + Active Textarea */}
@@ -271,45 +325,50 @@ export function CodeEditor({
           </div>
         ) : (
           <>
-            {/* Syntax Highlighted & Match Highlighted Backdrop */}
-            <pre
-              ref={backdropRef}
-              aria-hidden="true"
-              className={cn(
-                'pointer-events-none absolute inset-0 z-0 h-full w-full m-0 overflow-hidden py-2.5 px-3 font-mono text-xs sm:text-sm leading-6 select-none',
-                wordWrap
-                  ? 'whitespace-pre-wrap break-words overflow-x-hidden'
-                  : 'whitespace-pre overflow-x-auto'
-              )}
-              style={{ tabSize: 2 }}
-            >
-              <code>
-                {segments.map((seg, idx) => {
-                  if (seg.isMatch) {
+            {/* Syntax Highlighted & Match Highlighted Backdrop (Bypassed for large documents) */}
+            {!isLargeDocument && (
+              <pre
+                ref={backdropRef}
+                aria-hidden="true"
+                className={cn(
+                  'pointer-events-none absolute inset-0 z-0 h-full w-full m-0 overflow-hidden py-2.5 px-3 font-mono text-xs sm:text-sm leading-6 select-none',
+                  wordWrap
+                    ? 'whitespace-pre-wrap break-words overflow-x-hidden'
+                    : 'whitespace-pre overflow-x-auto'
+                )}
+                style={{ tabSize: 2 }}
+              >
+                <code>
+                  {segments.map((seg, idx) => {
+                    if (seg.isMatch) {
+                      return (
+                        <mark
+                          key={idx}
+                          className={cn(
+                            'rounded-xs px-0.5 py-0.2',
+                            seg.isCurrentMatch
+                              ? 'bg-[#68DBA9] text-[#003825] font-semibold ring-1 ring-[#85F8C4]'
+                              : 'bg-[#68DBA9]/20 text-[#68DBA9] ring-1 ring-[#68DBA9]/40'
+                          )}
+                        >
+                          {seg.text}
+                        </mark>
+                      )
+                    }
+
                     return (
-                      <mark
+                      <span
                         key={idx}
-                        className={cn(
-                          'rounded-xs px-0.5 py-0.2',
-                          seg.isCurrentMatch
-                            ? 'bg-[#68DBA9] text-[#003825] font-semibold ring-1 ring-[#85F8C4]'
-                            : 'bg-[#68DBA9]/20 text-[#68DBA9] ring-1 ring-[#68DBA9]/40'
-                        )}
+                        className={TOKEN_CLASS_MAP[seg.tokenType]}
                       >
                         {seg.text}
-                      </mark>
+                      </span>
                     )
-                  }
-
-                  return (
-                    <span key={idx} className={TOKEN_CLASS_MAP[seg.tokenType]}>
-                      {seg.text}
-                    </span>
-                  )
-                })}
-                {value.endsWith('\n') && ' '}
-              </code>
-            </pre>
+                  })}
+                  {value.endsWith('\n') && ' '}
+                </code>
+              </pre>
+            )}
 
             {/* Native Interactive Textarea Surface */}
             <textarea
@@ -334,12 +393,24 @@ export function CodeEditor({
                 wordWrap
                   ? 'whitespace-pre-wrap break-words overflow-x-hidden'
                   : 'whitespace-pre overflow-x-auto',
-                // Text is transparent so highlighted tokens show through, while caret and selection remain visible
-                'text-transparent caret-text-primary selection:bg-accent/25 selection:text-transparent',
+                isLargeDocument
+                  ? 'text-text-primary caret-text-primary selection:bg-accent/30 selection:text-text-primary'
+                  : 'text-transparent caret-text-primary selection:bg-accent/25 selection:text-transparent',
                 readOnly && 'cursor-default'
               )}
               style={{ tabSize: 2 }}
             />
+
+            {/* Subtle Large Document Mode Indicator */}
+            {isLargeDocument && (
+              <div
+                data-testid="large-doc-indicator"
+                className="pointer-events-none absolute bottom-2 right-4 z-20 rounded border border-border/80 bg-surface/90 px-2 py-0.5 text-3xs font-mono text-text-muted select-none backdrop-blur-xs shadow-xs"
+                title="Full DOM syntax highlighting bypassed to maintain high performance for large JSON documents"
+              >
+                High-performance mode active (&gt;150 KB)
+              </div>
+            )}
           </>
         )}
       </div>

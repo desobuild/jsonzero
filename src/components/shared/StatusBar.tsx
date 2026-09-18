@@ -1,3 +1,4 @@
+import { WifiOff } from 'lucide-react'
 import { PrivacyIndicator } from '@/components/shared/PrivacyIndicator'
 import { cn } from '@/lib/utils'
 
@@ -8,6 +9,7 @@ export interface StatusBarProps {
   byteCount?: number
   processingTimeMs?: number | null
   lastOperation?: 'format' | 'minify' | 'validate' | null
+  isOnline?: boolean
 }
 
 export function StatusBar({
@@ -16,6 +18,7 @@ export function StatusBar({
   keyCount = 0,
   processingTimeMs = null,
   lastOperation = null,
+  isOnline = true,
 }: StatusBarProps) {
   const getValidationIndicator = () => {
     switch (validationState) {
@@ -77,7 +80,7 @@ export function StatusBar({
         <span className="hidden sm:inline">UTF-8</span>
       </div>
 
-      {/* Right side: Execution performance & privacy status */}
+      {/* Right side: Execution performance, network indicator & privacy status */}
       <div className="flex items-center gap-3">
         {processingTimeMs !== null && (
           <div className="hidden xs:flex items-center gap-1 text-text-secondary font-mono">
@@ -92,6 +95,37 @@ export function StatusBar({
             </span>
           </div>
         )}
+
+        <div
+          id="network-status"
+          role="status"
+          aria-live="polite"
+          className={cn(
+            'flex items-center gap-1 font-mono text-3xs',
+            isOnline ? 'text-text-muted' : 'text-warning font-medium'
+          )}
+          title={
+            isOnline
+              ? 'Network reachable. All JSON processing remains 100% client-side.'
+              : 'Offline mode. All JSON processing continues 100% client-side.'
+          }
+        >
+          {isOnline ? (
+            <>
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-accent"
+                aria-hidden="true"
+              />
+              <span className="hidden sm:inline">Online</span>
+            </>
+          ) : (
+            <>
+              <WifiOff className="h-3 w-3 text-warning" aria-hidden="true" />
+              <span>Offline</span>
+            </>
+          )}
+        </div>
+
         <PrivacyIndicator compact />
       </div>
     </footer>

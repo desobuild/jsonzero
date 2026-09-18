@@ -7,6 +7,7 @@ import { Toast, type ToastType } from '@/components/ui/toast'
 import { Workbench, useFormatter } from '@/features/formatter'
 import { useSearch } from '@/features/search'
 import { Loader2 } from 'lucide-react'
+import { usePwa } from '@/pwa'
 import type { TransformType } from '@/features/transform'
 import type { ConvertType } from '@/features/convert'
 import type { TestingType } from '@/features/testing'
@@ -49,6 +50,7 @@ function WorkbenchLoadingFallback({ label }: { label: string }) {
 }
 
 export function App() {
+  const pwa = usePwa()
   const formatter = useFormatter()
   const inputTextareaRef = useRef<HTMLTextAreaElement>(null)
   const [activeView, setActiveView] = useState<
@@ -152,8 +154,27 @@ export function App() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
+      {/* Update notification banner if a new version is waiting */}
+      {pwa.isUpdateAvailable && (
+        <div
+          role="alert"
+          className="flex shrink-0 items-center justify-between border-b border-accent/40 bg-surface-elevated px-3 py-1 text-xs text-text-primary"
+        >
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+            <span>A new version of JSONZero is available.</span>
+          </div>
+          <button
+            onClick={pwa.applyUpdate}
+            className="rounded bg-accent px-2 py-0.5 font-mono text-3xs font-medium text-accent-foreground hover:bg-accent/90 focus:outline-none focus:ring-1 focus:ring-accent"
+          >
+            Update & Reload
+          </button>
+        </div>
+      )}
+
       {/* Header */}
-      <Header />
+      <Header canInstall={pwa.canInstall} onInstall={pwa.install} />
 
       {/* Privacy guarantee banner */}
       <PrivacyIndicator />
@@ -248,6 +269,7 @@ export function App() {
         byteCount={formatter.inputStats.byteCount}
         processingTimeMs={formatter.processingTimeMs}
         lastOperation={formatter.lastOperation}
+        isOnline={pwa.isOnline}
       />
 
       {/* Toast Notifications */}

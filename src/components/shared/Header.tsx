@@ -1,4 +1,4 @@
-import { Github, Moon, Sun, Monitor } from 'lucide-react'
+import { Github, Moon, Sun, Monitor, Download } from 'lucide-react'
 import { useTheme, type Theme } from '@/hooks/useTheme'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -15,7 +15,12 @@ const themeOptions: { value: Theme; label: string; icon: typeof Sun }[] = [
   { value: 'system', label: 'System', icon: Monitor },
 ]
 
-export function Header() {
+export interface HeaderProps {
+  canInstall?: boolean
+  onInstall?: () => void
+}
+
+export function Header({ canInstall = false, onInstall }: HeaderProps = {}) {
   const { theme, setTheme, resolvedTheme } = useTheme()
 
   const ThemeIcon = resolvedTheme === 'dark' ? Moon : Sun
@@ -42,6 +47,20 @@ export function Header() {
 
       {/* Right side actions */}
       <div className="flex items-center gap-1">
+        {canInstall && (
+          <Button
+            id="install-pwa-btn"
+            variant="ghost"
+            size="sm"
+            onClick={onInstall}
+            aria-label="Install JSONZero as application"
+            className="flex items-center gap-1.5 px-2 py-1 text-xs text-accent hover:text-accent font-medium"
+          >
+            <Download className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Install App</span>
+          </Button>
+        )}
+
         <a
           href="https://github.com/desobuild/jsonzero"
           target="_blank"

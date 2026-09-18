@@ -16,9 +16,19 @@ A privacy-first, client-side JSON developer workbench. Format, validate, diff, t
 
 ## Status
 
-> **Phase 8 — Large JSON Performance, Scalability & Bundle Optimization** complete.
+> **Phase 9 — Offline & Progressive Web App (PWA)** complete.
 >
-> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, Developer & Testing Tools, Web Worker processing, and bundle code splitting are active.
+> Core Formatter, Editor Search & Replace, JSON Inspection (Tree View, JSONPath & Statistics), Structural Compare / Diff, JSON Transform, JSON Conversion, Developer & Testing Tools, Web Worker processing, bundle code splitting, offline execution, and PWA installation are active.
+
+### Offline & PWA (Phase 9)
+
+JSONZero can be installed as a PWA and continues to process JSON locally when offline after the application has been cached.
+
+- **Offline-First**: Format, inspect, compare, convert, transform, and test JSON completely without an internet connection.
+- **Strict Privacy**: Application assets are cached locally by the service worker; user JSON is never cached or transmitted.
+- **Installable Desktop/Mobile App**: Uses standard Web App Manifest (`manifest.webmanifest`) and responsive layouts with zero third-party dependencies.
+- **Offline Web Workers**: Native Web Worker offloading for large JSON documents functions seamlessly offline.
+- **PWA Documentation**: See [docs/pwa.md](./docs/pwa.md) for caching architecture, service worker lifecycle, and browser support.
 
 ### Performance & Scalability (Phase 8)
 

@@ -6,6 +6,8 @@ Privacy-first JSON developer workbench.
 
 Format, inspect, compare, transform, convert, and test JSON — entirely in your browser with zero network requests and zero server uploads.
 
+**Live Application**: [https://jsonzero.desobuild.workers.dev/](https://jsonzero.desobuild.workers.dev/)
+
 ---
 
 ## Philosophy

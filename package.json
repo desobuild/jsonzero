@@ -5,7 +5,7 @@
   "type": "module",
   "description": "JSONZero — A privacy-first, client-side JSON developer workbench. JSON. Zero clutter.",
   "license": "MIT",
-  "homepage": "https://github.com/desobuild/jsonzero",
+  "homepage": "https://jsonzero.desobuild.workers.dev/",
   "repository": {
     "type": "git",
     "url": "https://github.com/desobuild/jsonzero.git"

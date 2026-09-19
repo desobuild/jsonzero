@@ -8,11 +8,7 @@
 
 // In production, Vite's build plugin substitutes the versioned cache name and full asset list
 const CACHE_NAME = 'jsonzero-dev'
-const PRECACHE_ASSETS = [
-  '/',
-  '/favicon.svg',
-  '/manifest.webmanifest',
-]
+const PRECACHE_ASSETS = ['/', '/favicon.svg', '/manifest.webmanifest']
 
 /**
  * Safely clone a response ensuring 'redirected' is false.
@@ -50,7 +46,10 @@ self.addEventListener('install', (event) => {
         try {
           const rootResponse = await cache.match('/')
           if (rootResponse) {
-            await cache.put('/index.html', toCleanResponse(rootResponse.clone()))
+            await cache.put(
+              '/index.html',
+              toCleanResponse(rootResponse.clone())
+            )
           }
         } catch {
           // Non-critical fallback
@@ -155,7 +154,9 @@ self.addEventListener('fetch', (event) => {
         })
       })
       .catch(async () => {
-        const fallback = await caches.match(url.pathname, { ignoreSearch: true })
+        const fallback = await caches.match(url.pathname, {
+          ignoreSearch: true,
+        })
         if (fallback) return fallback
         return new Response(null, {
           status: 404,

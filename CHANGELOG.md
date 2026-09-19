@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-18
+
 ### Added
 - Open-source community readiness documentation: `docs/architecture.md`, `docs/deployment.md`, `docs/privacy.md`, `docs/versioning.md`.
 - Standard GitHub community health files: `CODE_OF_CONDUCT.md`, `SUPPORT.md`.

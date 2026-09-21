@@ -9,6 +9,7 @@ import {
   type DragEvent,
   type KeyboardEvent,
   type RefObject,
+  type ReactNode,
 } from 'react'
 import { FileJson, UploadCloud } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -40,6 +41,7 @@ export interface CodeEditorProps {
   diffLines?: Record<number, DiffKind>
   onSelectionChange?: (start: number, end: number) => void
   textareaRef?: RefObject<HTMLTextAreaElement | null>
+  emptyFooter?: ReactNode
 }
 
 // Token color styles — using theme-aware CSS custom properties
@@ -77,6 +79,7 @@ export function CodeEditor({
   diffLines,
   onSelectionChange,
   textareaRef: externalTextareaRef,
+  emptyFooter,
 }: CodeEditorProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [currentLine, setCurrentLine] = useState(1)
@@ -339,7 +342,7 @@ export function CodeEditor({
       {/* Editor Area: Backdrop Layer + Active Textarea */}
       <div className="relative flex flex-1 overflow-hidden">
         {showEmptyState ? (
-          <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-text-muted">
+          <div className="flex flex-1 flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto text-center text-text-muted">
             <FileJson className="mb-2 h-8 w-8 text-text-dim" />
             <p className="text-sm font-medium text-text-secondary">
               {emptyMessage}
@@ -350,6 +353,7 @@ export function CodeEditor({
                 Ctrl+Shift+F
               </kbd>
             </p>
+            {emptyFooter}
           </div>
         ) : (
           <>

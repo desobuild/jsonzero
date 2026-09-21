@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jsonzero.desobuild.workers.dev/sitemap.xml

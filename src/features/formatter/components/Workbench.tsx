@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Toast, type ToastType } from '@/components/ui/toast'
 import { ErrorDisplay } from '@/components/shared/ErrorDisplay'
 import { CodeEditor } from '@/features/formatter/components/CodeEditor'
+import { WorkbenchOverview } from '@/features/formatter/components/WorkbenchOverview'
 import { SearchPanel, useSearch } from '@/features/search'
 import type {
   FormatterState,
@@ -424,6 +425,7 @@ export function Workbench({
               readOnly={true}
               wordWrap={wordWrap}
               emptyMessage="Format JSON to see the result."
+              emptyFooter={<WorkbenchOverview />}
             />
           </div>
         </div>

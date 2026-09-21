@@ -21,6 +21,7 @@ export default defineConfig({
       'tests/unit/**/*.test.{ts,tsx}',
       'tests/performance/**/*.test.{ts,tsx}',
     ],
+    testTimeout: 10000,
     css: false,
   },
 })

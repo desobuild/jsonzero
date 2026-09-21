@@ -84,6 +84,8 @@ export function CompareWorkbench({
               onClear={compare.clearA}
               parsed={compare.parsedA}
               wordWrap={compare.wordWrap}
+              diffHighlights={compare.diffHighlightsA}
+              diffLines={compare.diffLinesA}
               onToast={handleToast}
             />
           </div>
@@ -104,6 +106,8 @@ export function CompareWorkbench({
               onClear={compare.clearB}
               parsed={compare.parsedB}
               wordWrap={compare.wordWrap}
+              diffHighlights={compare.diffHighlightsB}
+              diffLines={compare.diffLinesB}
               onToast={handleToast}
             />
           </div>
@@ -123,6 +127,8 @@ export function CompareWorkbench({
             diffResult={compare.diffResult}
             isAValid={compare.parsedA.success}
             isBValid={compare.parsedB.success}
+            filterState={compare.filterState}
+            onToggleFilter={compare.toggleFilter}
             onToast={handleToast}
           />
         </div>

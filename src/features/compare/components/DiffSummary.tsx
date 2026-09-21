@@ -1,12 +1,15 @@
 import { CheckCircle2, Copy, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { DiffSummary as DiffSummaryType } from '@/lib/json/diff'
+import type { CompareFilterState } from '@/features/compare/types'
 import { formatDiffSummaryText } from '@/features/compare/utils'
 
 export interface DiffSummaryProps {
   summary: DiffSummaryType | null
   isAValid: boolean
   isBValid: boolean
+  filterState?: CompareFilterState
+  onToggleFilter?: (kind: 'changed' | 'added' | 'removed') => void
   onToast?: (message: string, type?: 'success' | 'error' | 'info') => void
 }
 
@@ -14,6 +17,8 @@ export function DiffSummary({
   summary,
   isAValid,
   isBValid,
+  filterState,
+  onToggleFilter,
   onToast,
 }: DiffSummaryProps) {
   const handleCopySummary = async () => {
@@ -75,44 +80,105 @@ export function DiffSummary({
     )
   }
 
+  const currentFilters = filterState || {
+    showChanged: true,
+    showAdded: true,
+    showRemoved: true,
+  }
+
   return (
     <div
       id="diff-summary"
       data-testid="diff-summary"
       className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2 text-xs"
     >
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2.5">
         <span className="font-semibold text-text-primary">
+          Found {summary.total}{' '}
+          {summary.total === 1 ? 'difference' : 'differences'}
+        </span>
+        <span className="text-border">·</span>
+        <span className="font-mono text-xs text-text-muted">
           {summary.total}{' '}
           {summary.total === 1 ? 'total change' : 'total changes'}
         </span>
-        <span className="text-border">·</span>
 
-        {summary.added > 0 && (
-          <span
-            data-testid="summary-added-badge"
-            className="inline-flex items-center rounded bg-diff-added/15 px-2 py-0.5 font-mono text-3xs font-medium text-diff-added"
-          >
-            + {summary.added} Added
-          </span>
-        )}
+        {summary.total > 0 && (
+          <>
+            <span className="text-border">·</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-text-muted">Show:</span>
 
-        {summary.removed > 0 && (
-          <span
-            data-testid="summary-removed-badge"
-            className="inline-flex items-center rounded bg-diff-removed/15 px-2 py-0.5 font-mono text-3xs font-medium text-diff-removed"
-          >
-            - {summary.removed} Removed
-          </span>
-        )}
+              {summary.changed > 0 && (
+                <label
+                  htmlFor="filter-changed"
+                  className="inline-flex cursor-pointer select-none items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary"
+                >
+                  <input
+                    type="checkbox"
+                    id="filter-changed"
+                    data-testid="filter-changed"
+                    checked={currentFilters.showChanged}
+                    onChange={() => onToggleFilter?.('changed')}
+                    className="h-3.5 w-3.5 rounded border-border bg-surface-elevated text-diff-changed accent-diff-changed focus:ring-1 focus:ring-diff-changed"
+                  />
+                  <span>Unequal values ({summary.changed})</span>
+                  <span
+                    data-testid="summary-changed-badge"
+                    className="inline-flex items-center rounded bg-diff-changed/15 px-1.5 py-0.5 font-mono text-3xs font-medium text-diff-changed"
+                  >
+                    ~ {summary.changed} Changed
+                  </span>
+                </label>
+              )}
 
-        {summary.changed > 0 && (
-          <span
-            data-testid="summary-changed-badge"
-            className="inline-flex items-center rounded bg-diff-changed/15 px-2 py-0.5 font-mono text-3xs font-medium text-diff-changed"
-          >
-            ~ {summary.changed} Changed
-          </span>
+              {summary.added > 0 && (
+                <label
+                  htmlFor="filter-added"
+                  className="inline-flex cursor-pointer select-none items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary"
+                >
+                  <input
+                    type="checkbox"
+                    id="filter-added"
+                    data-testid="filter-added"
+                    checked={currentFilters.showAdded}
+                    onChange={() => onToggleFilter?.('added')}
+                    className="h-3.5 w-3.5 rounded border-border bg-surface-elevated text-diff-added accent-diff-added focus:ring-1 focus:ring-diff-added"
+                  />
+                  <span>Added values ({summary.added})</span>
+                  <span
+                    data-testid="summary-added-badge"
+                    className="inline-flex items-center rounded bg-diff-added/15 px-1.5 py-0.5 font-mono text-3xs font-medium text-diff-added"
+                  >
+                    + {summary.added} Added
+                  </span>
+                </label>
+              )}
+
+              {summary.removed > 0 && (
+                <label
+                  htmlFor="filter-removed"
+                  className="inline-flex cursor-pointer select-none items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary"
+                >
+                  <input
+                    type="checkbox"
+                    id="filter-removed"
+                    data-testid="filter-removed"
+                    checked={currentFilters.showRemoved}
+                    onChange={() => onToggleFilter?.('removed')}
+                    className="h-3.5 w-3.5 rounded border-border bg-surface-elevated text-diff-removed accent-diff-removed focus:ring-1 focus:ring-diff-removed"
+                  />
+                  <span>Removed values ({summary.removed})</span>
+                  <span
+                    data-testid="summary-removed-badge"
+                    className="inline-flex items-center rounded bg-diff-removed/15 px-1.5 py-0.5 font-mono text-3xs font-medium text-diff-removed"
+                  >
+                    - {summary.removed} Removed
+                  </span>
+                </label>
+              )}
+            </div>
+          </>
         )}
       </div>
 

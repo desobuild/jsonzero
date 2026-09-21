@@ -4,9 +4,15 @@ import type {
   DiffSummary as DiffSummaryData,
   DiffKind,
 } from '@/lib/json/diff'
-import type { JsonParseResult } from '@/lib/json'
+import type {
+  JsonParseResult,
+  TokenizerDiffHighlight,
+  CompareFilterOptions,
+} from '@/lib/json'
 
 export type { DiffResult, DiffEntry, DiffSummaryData, DiffKind }
+
+export type CompareFilterState = CompareFilterOptions
 
 export type CompareMobileTab = 'jsonA' | 'jsonB' | 'diff'
 
@@ -16,6 +22,11 @@ export interface CompareState {
   parsedA: JsonParseResult
   parsedB: JsonParseResult
   diffResult: DiffResult | null
+  filterState: CompareFilterState
+  diffHighlightsA: TokenizerDiffHighlight[]
+  diffHighlightsB: TokenizerDiffHighlight[]
+  diffLinesA: Record<number, DiffKind>
+  diffLinesB: Record<number, DiffKind>
   wordWrap: boolean
   activeMobileTab: CompareMobileTab
 }
@@ -32,4 +43,6 @@ export interface CompareActions {
   loadSample: () => void
   setWordWrap: React.Dispatch<React.SetStateAction<boolean>>
   setActiveMobileTab: (tab: CompareMobileTab) => void
+  setFilterState: React.Dispatch<React.SetStateAction<CompareFilterState>>
+  toggleFilter: (kind: 'changed' | 'added' | 'removed') => void
 }

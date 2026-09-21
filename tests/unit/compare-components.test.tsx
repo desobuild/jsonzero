@@ -234,5 +234,68 @@ describe('Compare Feature Component Suite', () => {
         expect(screen.getAllByText(/Alice Morgan/i).length).toBeGreaterThan(0)
       })
     })
+
+    it('renders diff highlights in editors when inputs differ', async () => {
+      render(
+        <CompareWorkbench
+          initialJsonA={`{
+  "age": 77,
+  "name": "Ani"
+}`}
+          initialJsonB={`{
+  "age": 73,
+  "name": "Ani"
+}`}
+        />
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('Found 1 difference')).toBeInTheDocument()
+        expect(screen.getByText('Unequal values (1)')).toBeInTheDocument()
+        // Changed value highlights should be rendered in the document
+        const changedHighlights = screen.getAllByTestId(
+          'diff-highlight-changed'
+        )
+        expect(changedHighlights.length).toBeGreaterThanOrEqual(2)
+        expect(changedHighlights[0]).toHaveTextContent('77')
+        expect(changedHighlights[1]).toHaveTextContent('73')
+      })
+    })
+  })
+
+  describe('DiffSummary Filters', () => {
+    it('renders Found differences count and checkboxes for available categories', () => {
+      const summary: DiffSummaryType = {
+        added: 1,
+        removed: 1,
+        changed: 1,
+        total: 3,
+        isIdentical: false,
+      }
+      const onToggle = vi.fn()
+
+      render(
+        <DiffSummary
+          summary={summary}
+          isAValid={true}
+          isBValid={true}
+          onToggleFilter={onToggle}
+          filterState={{
+            showChanged: true,
+            showAdded: true,
+            showRemoved: true,
+          }}
+        />
+      )
+
+      expect(screen.getByText('Found 3 differences')).toBeInTheDocument()
+      expect(screen.getByText('Unequal values (1)')).toBeInTheDocument()
+      expect(screen.getByText('Added values (1)')).toBeInTheDocument()
+      expect(screen.getByText('Removed values (1)')).toBeInTheDocument()
+
+      const changedCheckbox = screen.getByTestId('filter-changed')
+      fireEvent.click(changedCheckbox)
+      expect(onToggle).toHaveBeenCalledWith('changed')
+    })
   })
 })

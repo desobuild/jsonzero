@@ -220,4 +220,285 @@ test.describe('JSONZero Structural Diff / Compare — Phase 4 E2E', () => {
     const paths = page.locator('[data-testid="diff-path"]')
     await expect(paths.filter({ hasText: '$.mobile' })).toBeVisible()
   })
+
+  test('Scenario 1: verify changed value is visually highlighted in both editors', async ({
+    page,
+  }) => {
+    await page.locator('#toolbar-diff').click()
+    await expect(page.locator('#compare-workbench')).toBeVisible()
+
+    const editorA = page.locator('#compare-json-a-editor')
+    const editorB = page.locator('#compare-json-b-editor')
+
+    await editorA.fill('{\n  "name": "Ani",\n  "age": 77\n}')
+    await editorB.fill('{\n  "name": "Ani",\n  "age": 73\n}')
+
+    const summary = page.locator('#diff-summary')
+    await expect(summary).toBeVisible()
+    await expect(summary).toContainText('Found 1 difference')
+    await expect(summary).toContainText('Unequal values (1)')
+
+    const paneA = page.locator('#compare-json-a-pane')
+    const paneB = page.locator('#compare-json-b-pane')
+
+    const highlightA = paneA.locator('[data-testid="diff-highlight-changed"]')
+    const highlightB = paneB.locator('[data-testid="diff-highlight-changed"]')
+
+    await expect(highlightA).toBeVisible()
+    await expect(highlightA).toHaveText('77')
+
+    await expect(highlightB).toBeVisible()
+    await expect(highlightB).toHaveText('73')
+  })
+
+  test('Scenario 2: verify added value is highlighted on right editor only', async ({
+    page,
+  }) => {
+    await page.locator('#toolbar-diff').click()
+    await expect(page.locator('#compare-workbench')).toBeVisible()
+
+    const editorA = page.locator('#compare-json-a-editor')
+    const editorB = page.locator('#compare-json-b-editor')
+
+    await editorA.fill('{\n  "name": "Ani"\n}')
+    await editorB.fill('{\n  "name": "Ani",\n  "role": "engineer"\n}')
+
+    const summary = page.locator('#diff-summary')
+    await expect(summary).toBeVisible()
+    await expect(summary).toContainText('Found 1 difference')
+    await expect(summary).toContainText('Added values (1)')
+
+    const paneA = page.locator('#compare-json-a-pane')
+    const paneB = page.locator('#compare-json-b-pane')
+
+    await expect(
+      paneA.locator('[data-testid="diff-highlight-added"]')
+    ).toHaveCount(0)
+
+    const highlightsB = paneB.locator('[data-testid="diff-highlight-added"]')
+    await expect(highlightsB.first()).toBeVisible()
+    await expect(highlightsB.filter({ hasText: 'engineer' })).toBeVisible()
+    await expect(highlightsB.filter({ hasText: 'role' })).toBeVisible()
+  })
+
+  test('Scenario 3: verify removed value is highlighted on left editor only', async ({
+    page,
+  }) => {
+    await page.locator('#toolbar-diff').click()
+    await expect(page.locator('#compare-workbench')).toBeVisible()
+
+    const editorA = page.locator('#compare-json-a-editor')
+    const editorB = page.locator('#compare-json-b-editor')
+
+    await editorA.fill('{\n  "name": "Ani",\n  "role": "engineer"\n}')
+    await editorB.fill('{\n  "name": "Ani"\n}')
+
+    const summary = page.locator('#diff-summary')
+    await expect(summary).toBeVisible()
+    await expect(summary).toContainText('Found 1 difference')
+    await expect(summary).toContainText('Removed values (1)')
+
+    const paneA = page.locator('#compare-json-a-pane')
+    const paneB = page.locator('#compare-json-b-pane')
+
+    const highlightsA = paneA.locator('[data-testid="diff-highlight-removed"]')
+    await expect(highlightsA.first()).toBeVisible()
+    await expect(highlightsA.filter({ hasText: 'engineer' })).toBeVisible()
+    await expect(highlightsA.filter({ hasText: 'role' })).toBeVisible()
+
+    await expect(
+      paneB.locator('[data-testid="diff-highlight-removed"]')
+    ).toHaveCount(0)
+  })
+
+  test('Scenario 4: toggle difference category filters and verify highlights update', async ({
+    page,
+  }) => {
+    await page.locator('#toolbar-diff').click()
+    await expect(page.locator('#compare-workbench')).toBeVisible()
+
+    const editorA = page.locator('#compare-json-a-editor')
+    const editorB = page.locator('#compare-json-b-editor')
+
+    await editorA.fill('{\n  "age": 77,\n  "role": "engineer"\n}')
+    await editorB.fill(
+      '{\n  "age": 73,\n  "role": "engineer",\n  "active": true\n}'
+    )
+
+    const summary = page.locator('#diff-summary')
+    await expect(summary).toContainText('Found 2 differences')
+    await expect(summary).toContainText('Unequal values (1)')
+    await expect(summary).toContainText('Added values (1)')
+
+    const paneA = page.locator('#compare-json-a-pane')
+    const paneB = page.locator('#compare-json-b-pane')
+
+    // Initially both changed and added highlights exist
+    await expect(
+      paneA.locator('[data-testid="diff-highlight-changed"]')
+    ).toHaveCount(1)
+    await expect(
+      paneB.locator('[data-testid="diff-highlight-changed"]')
+    ).toHaveCount(1)
+    await expect(
+      paneB.locator('[data-testid="diff-highlight-added"]').first()
+    ).toBeVisible()
+
+    // Uncheck "Unequal values"
+    const filterChanged = page.locator('[data-testid="filter-changed"]')
+    await filterChanged.uncheck()
+
+    // Changed highlights should disappear
+    await expect(
+      paneA.locator('[data-testid="diff-highlight-changed"]')
+    ).toHaveCount(0)
+    await expect(
+      paneB.locator('[data-testid="diff-highlight-changed"]')
+    ).toHaveCount(0)
+    // Added highlight remains visible
+    await expect(
+      paneB.locator('[data-testid="diff-highlight-added"]').first()
+    ).toBeVisible()
+
+    // Uncheck "Added values"
+    const filterAdded = page.locator('[data-testid="filter-added"]')
+    await filterAdded.uncheck()
+
+    // Added highlights should disappear
+    await expect(
+      paneB.locator('[data-testid="diff-highlight-added"]')
+    ).toHaveCount(0)
+
+    // Summary count stays accurate
+    await expect(summary).toContainText('Found 2 differences')
+
+    // Re-check "Unequal values"
+    await filterChanged.check()
+    await expect(
+      paneA.locator('[data-testid="diff-highlight-changed"]')
+    ).toHaveCount(1)
+    await expect(
+      paneB.locator('[data-testid="diff-highlight-changed"]')
+    ).toHaveCount(1)
+  })
+
+  test('Scenario 5: nested difference highlighting targets deep value without whole doc highlight', async ({
+    page,
+  }) => {
+    await page.locator('#toolbar-diff').click()
+    await expect(page.locator('#compare-workbench')).toBeVisible()
+
+    const editorA = page.locator('#compare-json-a-editor')
+    const editorB = page.locator('#compare-json-b-editor')
+
+    const docA = JSON.stringify(
+      {
+        user: {
+          profile: {
+            age: 77,
+          },
+        },
+      },
+      null,
+      2
+    )
+
+    const docB = JSON.stringify(
+      {
+        user: {
+          profile: {
+            age: 73,
+          },
+        },
+      },
+      null,
+      2
+    )
+
+    await editorA.fill(docA)
+    await editorB.fill(docB)
+
+    const summary = page.locator('#diff-summary')
+    await expect(summary).toContainText('Found 1 difference')
+
+    const paneA = page.locator('#compare-json-a-pane')
+    const paneB = page.locator('#compare-json-b-pane')
+
+    const highlightA = paneA.locator('[data-testid="diff-highlight-changed"]')
+    const highlightB = paneB.locator('[data-testid="diff-highlight-changed"]')
+
+    await expect(highlightA).toHaveCount(1)
+    await expect(highlightA).toHaveText('77')
+
+    await expect(highlightB).toHaveCount(1)
+    await expect(highlightB).toHaveText('73')
+  })
+
+  test('Final Verification Scenario: Ani and Belgaum exact test case', async ({
+    page,
+  }) => {
+    await page.locator('#toolbar-diff').click()
+    await expect(page.locator('#compare-workbench')).toBeVisible()
+
+    const editorA = page.locator('#compare-json-a-editor')
+    const editorB = page.locator('#compare-json-b-editor')
+
+    const inputA = JSON.stringify(
+      {
+        age: 77,
+        name: 'Ani',
+        address: {
+          city: 'Belgaum',
+        },
+      },
+      null,
+      2
+    )
+
+    const inputB = JSON.stringify(
+      {
+        age: 73,
+        name: 'Ani',
+        address: {
+          city: 'Belgaum',
+        },
+      },
+      null,
+      2
+    )
+
+    await editorA.fill(inputA)
+    await editorB.fill(inputB)
+
+    // Expected result:
+    // - "Found 1 difference"
+    // - "Unequal values (1)"
+    const summary = page.locator('#diff-summary')
+    await expect(summary).toBeVisible()
+    await expect(summary).toContainText('Found 1 difference')
+    await expect(summary).toContainText('Unequal values (1)')
+
+    const paneA = page.locator('#compare-json-a-pane')
+    const paneB = page.locator('#compare-json-b-pane')
+
+    // - The age value/line is visibly highlighted on the LEFT.
+    const highlightA = paneA.locator('[data-testid="diff-highlight-changed"]')
+    await expect(highlightA).toHaveCount(1)
+    await expect(highlightA).toHaveText('77')
+
+    // - The age value/line is visibly highlighted on the RIGHT.
+    const highlightB = paneB.locator('[data-testid="diff-highlight-changed"]')
+    await expect(highlightB).toHaveCount(1)
+    await expect(highlightB).toHaveText('73')
+
+    // - name remains unhighlighted.
+    // - address remains unhighlighted.
+    // Verify no other highlights exist in either pane
+    await expect(paneA.locator('[data-testid^="diff-highlight-"]')).toHaveCount(
+      1
+    )
+    await expect(paneB.locator('[data-testid^="diff-highlight-"]')).toHaveCount(
+      1
+    )
+  })
 })

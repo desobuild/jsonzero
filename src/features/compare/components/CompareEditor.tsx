@@ -2,7 +2,11 @@ import { useCallback } from 'react'
 import { Braces, Trash2, Clipboard, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CodeEditor } from '@/features/formatter/components/CodeEditor'
-import type { JsonParseResult } from '@/lib/json'
+import type {
+  JsonParseResult,
+  TokenizerDiffHighlight,
+  DiffKind,
+} from '@/lib/json'
 
 export interface CompareEditorProps {
   id: string
@@ -13,6 +17,8 @@ export interface CompareEditorProps {
   onClear: () => void
   parsed: JsonParseResult
   wordWrap?: boolean
+  diffHighlights?: TokenizerDiffHighlight[]
+  diffLines?: Record<number, DiffKind>
   onToast?: (message: string, type?: 'success' | 'error' | 'info') => void
 }
 
@@ -31,6 +37,8 @@ export function CompareEditor({
   onClear,
   parsed,
   wordWrap = false,
+  diffHighlights,
+  diffLines,
   onToast,
 }: CompareEditorProps) {
   const lineCount = value ? value.split('\n').length : 0
@@ -156,6 +164,8 @@ export function CompareEditor({
           errorLine={parsed.errorLine}
           placeholder={`Enter or paste ${title} JSON...`}
           wordWrap={wordWrap}
+          diffHighlights={diffHighlights}
+          diffLines={diffLines}
           className="h-full"
         />
       </div>

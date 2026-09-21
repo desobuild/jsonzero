@@ -18,6 +18,8 @@ import {
   type TokenType,
 } from '@/lib/json/tokenizer'
 import type { SearchMatch } from '@/lib/search/types'
+import type { TokenizerDiffHighlight } from '@/lib/json/tokenizer'
+import type { DiffKind } from '@/lib/json/diff'
 
 export interface CodeEditorProps {
   id: string
@@ -34,6 +36,8 @@ export interface CodeEditorProps {
   wordWrap?: boolean
   searchMatches?: SearchMatch[]
   currentMatchIndex?: number
+  diffHighlights?: TokenizerDiffHighlight[]
+  diffLines?: Record<number, DiffKind>
   onSelectionChange?: (start: number, end: number) => void
   textareaRef?: RefObject<HTMLTextAreaElement | null>
 }
@@ -69,6 +73,8 @@ export function CodeEditor({
   wordWrap = false,
   searchMatches = [],
   currentMatchIndex = -1,
+  diffHighlights = [],
+  diffLines,
   onSelectionChange,
   textareaRef: externalTextareaRef,
 }: CodeEditorProps) {
@@ -101,9 +107,17 @@ export function CodeEditor({
       value,
       tokens,
       searchMatches,
-      currentMatchIndex
+      currentMatchIndex,
+      diffHighlights
     )
-  }, [value, tokens, searchMatches, currentMatchIndex, isLargeDocument])
+  }, [
+    value,
+    tokens,
+    searchMatches,
+    currentMatchIndex,
+    diffHighlights,
+    isLargeDocument,
+  ])
 
   // Update current line number from cursor position
   const updateCursorLine = useCallback(() => {
@@ -285,12 +299,26 @@ export function CodeEditor({
             const lineNum = visibleStartLine + i
             const isErrorOnLine = errorLine === lineNum
             const isCurrentLine = !readOnly && currentLine === lineNum
+            const lineDiffKind = diffLines?.[lineNum]
+
+            const diffGutterClass =
+              lineDiffKind === 'changed'
+                ? 'font-semibold text-diff-changed border-l-2 border-diff-changed pl-0.5'
+                : lineDiffKind === 'added'
+                  ? 'font-semibold text-diff-added border-l-2 border-diff-added pl-0.5'
+                  : lineDiffKind === 'removed'
+                    ? 'font-semibold text-diff-removed border-l-2 border-diff-removed pl-0.5'
+                    : ''
 
             return (
               <span
                 key={lineNum}
                 className={cn(
                   'tabular-nums transition-colors',
+                  lineDiffKind &&
+                    !isErrorOnLine &&
+                    !isCurrentLine &&
+                    diffGutterClass,
                   isErrorOnLine && 'font-bold text-error',
                   isCurrentLine && !isErrorOnLine && 'font-semibold text-accent'
                 )}
@@ -350,6 +378,25 @@ export function CodeEditor({
                               ? 'bg-match-current-bg text-accent-foreground font-semibold ring-1 ring-match-ring'
                               : 'bg-match-bg text-syntax-string ring-1 ring-match-ring'
                           )}
+                        >
+                          {seg.text}
+                        </mark>
+                      )
+                    }
+
+                    if (seg.diffKind) {
+                      const diffClass =
+                        seg.diffKind === 'changed'
+                          ? 'bg-diff-changed/20 text-diff-changed font-medium ring-1 ring-diff-changed/40 rounded-xs px-0.5 py-0.2'
+                          : seg.diffKind === 'added'
+                            ? 'bg-diff-added/20 text-diff-added font-medium ring-1 ring-diff-added/40 rounded-xs px-0.5 py-0.2'
+                            : 'bg-diff-removed/20 text-diff-removed font-medium ring-1 ring-diff-removed/40 rounded-xs px-0.5 py-0.2'
+
+                      return (
+                        <mark
+                          key={idx}
+                          data-testid={`diff-highlight-${seg.diffKind}`}
+                          className={diffClass}
                         >
                           {seg.text}
                         </mark>

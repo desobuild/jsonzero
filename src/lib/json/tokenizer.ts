@@ -15,6 +15,13 @@ export interface HighlightSegment {
   tokenType: TokenType
   isMatch?: boolean
   isCurrentMatch?: boolean
+  diffKind?: 'changed' | 'added' | 'removed'
+}
+
+export interface TokenizerDiffHighlight {
+  start: number
+  end: number
+  kind: 'changed' | 'added' | 'removed'
 }
 
 const NUMBER_REGEX = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/
@@ -167,24 +174,25 @@ export function tokenizeJson(text: string): Token[] {
 }
 
 /**
- * Slices tokens around search match boundaries so that tokens and search highlights
- * can be rendered cleanly without overlapping DOM structures.
+ * Slices tokens around search match and diff boundaries so that syntax tokens,
+ * search highlights, and diff highlights can be rendered cleanly without overlapping DOM structures.
  */
 export function buildHighlightSegments(
   text: string,
   tokens: Token[],
   matches: SearchMatch[] = [],
-  currentMatchIndex = -1
+  currentMatchIndex = -1,
+  diffHighlights: TokenizerDiffHighlight[] = []
 ): HighlightSegment[] {
   if (tokens.length === 0) return []
-  if (matches.length === 0) {
+  if (matches.length === 0 && diffHighlights.length === 0) {
     return tokens.map((t) => ({
       text: t.text,
       tokenType: t.type,
     }))
   }
 
-  // Create boundary points at every token start/end and match start/end
+  // Create boundary points at every token start/end, match start/end, and diff start/end
   const boundaries = new Set<number>()
   boundaries.add(0)
   boundaries.add(text.length)
@@ -196,6 +204,10 @@ export function buildHighlightSegments(
   for (const m of matches) {
     boundaries.add(m.start)
     boundaries.add(m.end)
+  }
+  for (const d of diffHighlights) {
+    boundaries.add(d.start)
+    boundaries.add(d.end)
   }
 
   const sortedPoints = Array.from(boundaries).sort((a, b) => a - b)
@@ -226,11 +238,21 @@ export function buildHighlightSegments(
     const isMatch = Boolean(match && start >= match.start && end <= match.end)
     const isCurrentMatch = isMatch && matchIdx === currentMatchIndex
 
+    // Check if segment falls within a diff highlight
+    let diffKind: 'changed' | 'added' | 'removed' | undefined
+    for (const d of diffHighlights) {
+      if (start >= d.start && end <= d.end) {
+        diffKind = d.kind
+        break
+      }
+    }
+
     segments.push({
       text: segText,
       tokenType,
       isMatch,
       isCurrentMatch,
+      diffKind,
     })
   }
 
